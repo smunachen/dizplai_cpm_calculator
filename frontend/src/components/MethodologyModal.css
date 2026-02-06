@@ -129,6 +129,12 @@
   font-style: italic;
 }
 
+.cpm-value {
+  color: #f4c430;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
 .note {
   background: rgba(244, 196, 48, 0.1);
   border-left: 3px solid #f4c430;
