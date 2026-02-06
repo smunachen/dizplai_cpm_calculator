@@ -16,30 +16,31 @@ function MethodologyModal({ isOpen, onClose }) {
           <h3>📊 Industry CPM Benchmarks</h3>
           <p>We use average CPM rates for standard video advertising from authoritative industry sources:</p>
           
-        <div className="benchmark-item">
-  <strong>Gambling:</strong> <span className="cpm-value">£50 CPM</span>
-  <span className="source">WordStream 2024</span>
-</div>
-<div className="benchmark-item">
-  <strong>Banking:</strong> <span className="cpm-value">£35 CPM</span>
-  <span className="source">eMarketer 2024</span>
-</div>
-<div className="benchmark-item">
-  <strong>Sports:</strong> <span className="cpm-value">£25 CPM</span>
-  <span className="source">eMarketer, IAB 2024</span>
-</div>
-<div className="benchmark-item">
-  <strong>Fashion:</strong> <span className="cpm-value">£20 CPM</span>
-  <span className="source">Statista 2024</span>
-</div>
-<div className="benchmark-item">
-  <strong>Food Delivery:</strong> <span className="cpm-value">£20 CPM</span>
-  <span className="source">WordStream 2024</span>
-</div>
-<div className="benchmark-item">
-  <strong>Beauty:</strong> <span className="cpm-value">£18 CPM</span>
-  <span className="source">Statista 2024</span>
-</div>
+          <div className="benchmark-grid">
+            <div className="benchmark-item">
+              <div><strong>Gambling:</strong> <span className="cpm-value">£50 CPM</span></div>
+              <span className="source">WordStream 2024</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Banking:</strong> <span className="cpm-value">£35 CPM</span></div>
+              <span className="source">eMarketer 2024</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Sports:</strong> <span className="cpm-value">£25 CPM</span></div>
+              <span className="source">eMarketer, IAB 2024</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Fashion:</strong> <span className="cpm-value">£20 CPM</span></div>
+              <span className="source">Statista 2024</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Food Delivery:</strong> <span className="cpm-value">£20 CPM</span></div>
+              <span className="source">WordStream 2024</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Beauty:</strong> <span className="cpm-value">£18 CPM</span></div>
+              <span className="source">Statista 2024</span>
+            </div>
           </div>
 
           <p className="note">These represent typical rates for standard YouTube pre-roll ads (skippable, separate from content).</p>
