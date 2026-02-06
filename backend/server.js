@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const benchmarksRoutes = require('./routes/benchmarks');
 const calculatorRoutes = require('./routes/calculator');
+const campaignsRoutes = require('./routes/campaigns');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,6 +16,7 @@ app.use(express.json());
 // Routes
 app.use('/api/benchmarks', benchmarksRoutes);
 app.use('/api/calculator', calculatorRoutes);
+app.use('/api/campaigns', campaignsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

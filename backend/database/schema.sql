@@ -74,3 +74,24 @@ CREATE TABLE ad_slots (
 CREATE INDEX idx_calculations_session ON calculations(session_id);
 CREATE INDEX idx_calculations_created ON calculations(created_at);
 CREATE INDEX idx_ad_slots_calculation ON ad_slots(calculation_id);
+
+-- Campaigns table: Groups multiple streams under a channel
+CREATE TABLE campaigns (
+  id SERIAL PRIMARY KEY,
+  channel_name VARCHAR(200) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Campaign streams: Individual streams within a campaign
+CREATE TABLE campaign_streams (
+  id SERIAL PRIMARY KEY,
+  campaign_id INTEGER REFERENCES campaigns(id) ON DELETE CASCADE,
+  stream_type VARCHAR(100) NOT NULL,
+  calculation_id INTEGER REFERENCES calculations(id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create indexes
+CREATE INDEX idx_campaigns_channel ON campaigns(channel_name);
+CREATE INDEX idx_campaign_streams_campaign ON campaign_streams(campaign_id);
