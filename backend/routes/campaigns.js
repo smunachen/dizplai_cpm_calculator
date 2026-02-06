@@ -89,6 +89,40 @@ router.post('/create', async (req, res) => {
 });
 
 /**
+ * GET /api/campaigns/list
+ * Get all campaigns
+ */
+router.get('/list', async (req, res) => {
+  try {
+    const campaigns = await query(
+      `SELECT 
+        c.id,
+        c.channel_name,
+        c.created_at,
+        COUNT(cs.id) as stream_count,
+        SUM(calc.total_inventory_value) as total_value
+      FROM campaigns c
+      LEFT JOIN campaign_streams cs ON c.id = cs.campaign_id
+      LEFT JOIN calculations calc ON cs.calculation_id = calc.id
+      GROUP BY c.id, c.channel_name, c.created_at
+      ORDER BY c.created_at DESC`
+    );
+
+    res.json({
+      success: true,
+      campaigns: campaigns.rows
+    });
+
+  } catch (error) {
+    console.error('Campaign list error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve campaigns'
+    });
+  }
+});
+
+/**
  * GET /api/campaigns/:id
  * Get campaign details with all streams
  */
@@ -141,40 +175,6 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to retrieve campaign'
-    });
-  }
-});
-
-/**
- * GET /api/campaigns/list
- * Get all campaigns
- */
-router.get('/list', async (req, res) => {
-  try {
-    const campaigns = await query(
-      `SELECT 
-        c.id,
-        c.channel_name,
-        c.created_at,
-        COUNT(cs.id) as stream_count,
-        SUM(calc.total_inventory_value) as total_value
-      FROM campaigns c
-      LEFT JOIN campaign_streams cs ON c.id = cs.campaign_id
-      LEFT JOIN calculations calc ON cs.calculation_id = calc.id
-      GROUP BY c.id, c.channel_name, c.created_at
-      ORDER BY c.created_at DESC`
-    );
-
-    res.json({
-      success: true,
-      campaigns: campaigns.rows
-    });
-
-  } catch (error) {
-    console.error('Campaign list error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to retrieve campaigns'
     });
   }
 });
