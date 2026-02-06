@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import CampaignBuilder from './components/CampaignBuilder';
+import CampaignDashboard from './components/CampaignDashboard';
 import './App.css';
 
 function App() {
-  const [activeView, setActiveView] = useState('single'); // 'single' or 'campaign'
+  const [activeView, setActiveView] = useState('single'); // 'single', 'campaign', or 'dashboard'
 
   return (
     <div className="App">
@@ -24,11 +25,19 @@ function App() {
             >
               Campaign Builder
             </button>
+            <button 
+              className={activeView === 'dashboard' ? 'nav-btn active' : 'nav-btn'}
+              onClick={() => setActiveView('dashboard')}
+            >
+              Saved Campaigns
+            </button>
           </div>
         </div>
       </nav>
 
-      {activeView === 'single' ? <Dashboard /> : <CampaignBuilder />}
+      {activeView === 'single' && <Dashboard />}
+      {activeView === 'campaign' && <CampaignBuilder />}
+      {activeView === 'dashboard' && <CampaignDashboard />}
     </div>
   );
 }

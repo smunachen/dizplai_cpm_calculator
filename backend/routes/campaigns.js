@@ -145,4 +145,76 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/campaigns/list
+ * Get all campaigns
+ */
+router.get('/list', async (req, res) => {
+  try {
+    const campaigns = await query(
+      `SELECT 
+        c.id,
+        c.channel_name,
+        c.created_at,
+        COUNT(cs.id) as stream_count,
+        SUM(calc.total_inventory_value) as total_value
+      FROM campaigns c
+      LEFT JOIN campaign_streams cs ON c.id = cs.campaign_id
+      LEFT JOIN calculations calc ON cs.calculation_id = calc.id
+      GROUP BY c.id, c.channel_name, c.created_at
+      ORDER BY c.created_at DESC`
+    );
+
+    res.json({
+      success: true,
+      campaigns: campaigns.rows
+    });
+
+  } catch (error) {
+    console.error('Campaign list error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve campaigns'
+    });
+  }
+});
+
+/**
+ * DELETE /api/campaigns/:id
+ * Delete a campaign and all its streams
+ */
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if campaign exists
+    const campaign = await query(
+      'SELECT * FROM campaigns WHERE id = $1',
+      [id]
+    );
+
+    if (campaign.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Campaign not found'
+      });
+    }
+
+    // Delete campaign (cascade will delete campaign_streams)
+    await query('DELETE FROM campaigns WHERE id = $1', [id]);
+
+    res.json({
+      success: true,
+      message: 'Campaign deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Campaign deletion error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete campaign'
+    });
+  }
+});
+
 module.exports = router;
