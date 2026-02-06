@@ -21,13 +21,15 @@ class PricingEngine {
    */
   static calculateAdValue(inputs) {
     const {
-      baseCPM,
-      multipliers,
-      streamLengthMinutes,
-      avgViewTimeMinutes,
-      totalViews,
-      userSelectedFrequency = null
-    } = inputs;
+  	baseCPM,
+ 	 multipliers,
+ 	 streamLengthMinutes,
+ 	 avgViewTimeMinutes,
+ 	 totalViews,
+ 	 userSelectedFrequency = null,
+ 	 currency = 'GBP',
+ 	 exchangeRate = 0.79
+	} = inputs;
 
     // Validation
     if (!baseCPM || baseCPM <= 0) {
@@ -46,8 +48,13 @@ class PricingEngine {
     // Step 1: Calculate total multiplier (compound multiplicatively)
     const totalMultiplier = multipliers.reduce((acc, val) => acc * val, 1);
     
-    // Step 2: Calculate premium CPM
-    const premiumCPM = baseCPM * totalMultiplier;
+    // Step 2: Calculate premium CPM using adjusted multiplier
+    // Instead of compounding (1.8 × 2.5 × 1.3 × 1.4 = 8.19x)
+    // We use geometric mean to get a more balanced premium
+    // Formula: (product of all multipliers) ^ (1/number of multipliers)
+    const geometricMean = Math.pow(totalMultiplier, 1 / multipliers.length);
+    const adjustedMultiplier = 1 + (geometricMean - 1) * 1.5; // Scale the premium
+    const premiumCPM = baseCPM * adjustedMultiplier;
     
     // Step 3: Calculate unique watch sessions
     // How many times does the average viewer "cycle" through the stream?
@@ -89,6 +96,8 @@ class PricingEngine {
       // Input values (for reference)
       inputs: {
         baseCPM: parseFloat(baseCPM.toFixed(2)),
+        currency,
+        exchangeRate,
         streamLengthMinutes,
         avgViewTimeMinutes,
         totalViews,
@@ -96,6 +105,8 @@ class PricingEngine {
       
       // Multiplier calculations
       totalMultiplier: parseFloat(totalMultiplier.toFixed(2)),
+      adjustedMultiplier: parseFloat(adjustedMultiplier.toFixed(2)),
+      geometricMean: parseFloat(geometricMean.toFixed(2)),
       premiumCPM: parseFloat(premiumCPM.toFixed(2)),
       
       // Frequency calculations
