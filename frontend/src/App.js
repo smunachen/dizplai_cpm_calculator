@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import CampaignBuilder from './components/CampaignBuilder';
 import CampaignDashboard from './components/CampaignDashboard';
+import MethodologyModal from './components/MethodologyModal';
 import './App.css';
 
 function App() {
   const [activeView, setActiveView] = useState('single'); // 'single', 'campaign', or 'dashboard'
+  const [showMethodology, setShowMethodology] = useState(false);
 
   return (
     <div className="App">
@@ -31,6 +33,12 @@ function App() {
             >
               Saved Campaigns
             </button>
+            <button 
+              className="nav-btn methodology-btn"
+              onClick={() => setShowMethodology(true)}
+            >
+              ℹ️ How It Works
+            </button>
           </div>
         </div>
       </nav>
@@ -38,6 +46,11 @@ function App() {
       {activeView === 'single' && <Dashboard />}
       {activeView === 'campaign' && <CampaignBuilder />}
       {activeView === 'dashboard' && <CampaignDashboard />}
+
+      <MethodologyModal 
+        isOpen={showMethodology} 
+        onClose={() => setShowMethodology(false)} 
+      />
     </div>
   );
 }

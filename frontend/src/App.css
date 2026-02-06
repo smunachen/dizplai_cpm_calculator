@@ -70,6 +70,18 @@ body {
   color: #0a0f1a;
 }
 
+.nav-btn.methodology-btn {
+  background: rgba(244, 196, 48, 0.15);
+  border-color: #f4c430;
+  color: #f4c430;
+}
+
+.nav-btn.methodology-btn:hover {
+  background: rgba(244, 196, 48, 0.25);
+  border-color: #ffd74d;
+  color: #ffd74d;
+}
+
 @media (max-width: 768px) {
   .main-nav {
     padding: 1rem;
