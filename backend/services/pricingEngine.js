@@ -21,15 +21,15 @@ class PricingEngine {
    */
   static calculateAdValue(inputs) {
     const {
-  	baseCPM,
- 	 multipliers,
- 	 streamLengthMinutes,
- 	 avgViewTimeMinutes,
- 	 totalViews,
- 	 userSelectedFrequency = null,
- 	 currency = 'GBP',
- 	 exchangeRate = 0.79
-	} = inputs;
+      baseCPM,
+      multipliers,
+      streamLengthMinutes,
+      avgViewTimeMinutes,
+      totalViews,
+      userSelectedFrequency = null,
+      currency = 'GBP',
+      exchangeRate = 0.79
+    } = inputs;
 
     // Validation
     if (!baseCPM || baseCPM <= 0) {
@@ -68,28 +68,36 @@ class PricingEngine {
     // Minimum placements needed to reach each viewer at least once
     const minAdFrequency = Math.ceil(uniqueWatchSessions);
     
-    // Step 6: Calculate cost per 30-second placement
-    // CPM = cost per 1000 impressions, so divide by 1000 and multiply by total views
-    const costPerPlacement = (premiumCPM / 1000) * totalViews;
-    
-    // Step 7: Calculate maximum possible placements (30% rule)
-    // Ads cannot exceed 30% of total stream time
-    const maxAdTimeMinutes = streamLengthMinutes * 0.30;
+    // Step 6: Calculate maximum possible placements (30% rule based on VIEWER experience)
+    // Ads cannot exceed 30% of average view time (not stream length)
+    const maxAdTimeMinutes = avgViewTimeMinutes * 0.30;
     const maxPlacements = Math.floor(maxAdTimeMinutes / 0.5); // 30 seconds = 0.5 minutes per ad
     
-    // Step 8: Determine selected frequency
+    // Step 7: Calculate available brand slots
+    // How many brands can we fit if each needs minAdFrequency placements?
+    const availableBrandSlots = Math.floor(maxPlacements / minAdFrequency);
+    const leftoverPlacements = maxPlacements % minAdFrequency;
+    
+    // Step 8: Calculate cost per activation (one slot = all placements for one brand)
+    // This is the cost for ONE BRAND to reach the full audience
+    // CPM = cost per 1000 impressions, so divide by 1000 and multiply by total views
+    const costPerPlacement = (premiumCPM / 1000) * totalViews;
+    const costPerActivation = costPerPlacement * minAdFrequency; // One brand buys ONE activation
+    
+    // Step 9: Determine selected frequency (for backwards compatibility)
     const selectedFrequency = userSelectedFrequency || minAdFrequency;
     
-    // Validate selected frequency doesn't exceed maximum
+    // Validate selected frequency
     if (selectedFrequency > maxPlacements) {
       throw new Error(
         `Selected frequency (${selectedFrequency}) exceeds maximum placements (${maxPlacements}). ` +
-        `Reduce frequency or increase stream length.`
+        `Reduce frequency or increase average view time.`
       );
     }
     
-    // Step 9: Calculate total inventory value
-    const totalInventoryValue = costPerPlacement * selectedFrequency;
+    // Step 10: Calculate total inventory value (ONE SLOT = ONE ACTIVATION)
+    // A brand pays for ONE activation which includes all minimum frequency placements
+    const totalInventoryValue = costPerActivation; // Single brand buying one slot
     
     // Return all calculated metrics
     return {
@@ -117,14 +125,17 @@ class PricingEngine {
       // Placement constraints
       maxPlacements,
       selectedFrequency,
+      availableBrandSlots, // NEW: How many brands can fit
+      leftoverPlacements, // NEW: Unused placement slots
       
-      // Pricing outputs
-      costPerPlacement: parseFloat(costPerPlacement.toFixed(2)),
-      totalInventoryValue: parseFloat(totalInventoryValue.toFixed(2)),
+      // Pricing outputs (NEW LOGIC)
+      costPerPlacement: parseFloat(costPerPlacement.toFixed(2)), // Cost for ONE 30-sec placement
+      costPerActivation: parseFloat(costPerActivation.toFixed(2)), // Cost for ONE BRAND SLOT
+      totalInventoryValue: parseFloat(totalInventoryValue.toFixed(2)), // Single brand value
       
       // Additional useful metrics
       adTimeMinutes: selectedFrequency * 0.5,
-      adTimePercentage: parseFloat(((selectedFrequency * 0.5 / streamLengthMinutes) * 100).toFixed(1)),
+      adTimePercentage: parseFloat(((selectedFrequency * 0.5 / avgViewTimeMinutes) * 100).toFixed(1)),
       costPerUniqueViewer: parseFloat((totalInventoryValue / effectiveUniqueViewers).toFixed(2)),
     };
   }
@@ -149,7 +160,7 @@ class PricingEngine {
     if (totalPlacementsRequested > maxPlacements) {
       throw new Error(
         `Total placements requested (${totalPlacementsRequested}) exceeds maximum (${maxPlacements}). ` +
-        `Maximum ad time is 30% of stream length.`
+        `Maximum ad time is 30% of average view time.`
       );
     }
     

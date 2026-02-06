@@ -135,20 +135,40 @@ function Dashboard() {
           </button>
         </div>
 
-        {result && (
+{result && (
           <div className="results-section">
             <h2>Sponsorship Value</h2>
             
             <div className="result-card highlight">
-              <h3>Total Inventory Value</h3>
+              <h3>Total Inventory Value (Single Brand)</h3>
               <p className="value">{formatCurrency(result.calculation.totalInventoryValue)}</p>
               <p className="explanation">
-                This is the total value of all {result.calculation.selectedFrequency} ad placements. 
-                Calculated as: Cost Per Placement ({formatCurrency(result.calculation.costPerPlacement)}) 
-                × Frequency ({result.calculation.selectedFrequency}) = {formatCurrency(result.calculation.totalInventoryValue)}
+                This is the value for ONE BRAND to reach your entire audience. One brand pays {formatCurrency(result.calculation.costPerActivation)} for one activation, which includes {result.calculation.minAdFrequency} placements automatically to guarantee every viewer sees their ad at least once.
               </p>
             </div>
 
+            <div className="result-card">
+              <h3>Cost Per Activation</h3>
+              <p className="value">{formatCurrency(result.calculation.costPerActivation)}</p>
+              <p className="detail">Includes {result.calculation.minAdFrequency} placements</p>
+              <p className="explanation">
+                Each brand buys ONE activation slot = {result.calculation.minAdFrequency} × 30-second placements. 
+                Cost per single placement: {formatCurrency(result.calculation.costPerPlacement)} × {result.calculation.minAdFrequency} placements = {formatCurrency(result.calculation.costPerActivation)}. 
+                This guarantees the brand reaches all {result.calculation.effectiveUniqueViewers.toLocaleString()} unique viewers.
+              </p>
+            </div>
+
+            <div className="result-card">
+              <h3>Available Brand Slots</h3>
+              <p className="value">{result.calculation.availableBrandSlots} brands</p>
+              <p className="detail">{result.calculation.leftoverPlacements} leftover placements</p>
+              <p className="explanation">
+                With {result.calculation.maxPlacements} maximum placements (30% of {result.calculation.inputs.avgViewTimeMinutes} min average view time) 
+                and {result.calculation.minAdFrequency} placements required per brand, you can fit {result.calculation.availableBrandSlots} brands. 
+                Maximum revenue: {result.calculation.availableBrandSlots} × {formatCurrency(result.calculation.costPerActivation)} = {formatCurrency(result.calculation.availableBrandSlots * result.calculation.costPerActivation)}.
+              </p>
+            </div>
+            
             <div className="result-card">
               <h3>Premium CPM</h3>
               <p className="value">{formatCurrency(result.calculation.premiumCPM)}</p>
@@ -160,17 +180,6 @@ function Dashboard() {
                 all factors (1.8 × 2.5 × 1.3 × 1.4 = 8.19x), we use the geometric mean ({result.calculation.geometricMean.toFixed(2)}) 
                 and scale it to {result.calculation.adjustedMultiplier}x. This accounts for unskippable format, 
                 integrated content, live streaming, and high-attention environment without over-inflating the value.
-              </p>
-            </div>
-
-            <div className="result-card">
-              <h3>Cost Per Placement</h3>
-              <p className="value">{formatCurrency(result.calculation.costPerPlacement)}</p>
-              <p className="detail">Per 30-second ad</p>
-              <p className="explanation">
-                Calculated as: (Premium CPM ÷ 1,000) × Total Views. 
-                Each 30-second sponsorship placement reaches all {result.calculation.inputs.totalViews.toLocaleString()} views 
-                at the premium rate of {formatCurrency(result.calculation.premiumCPM)} per thousand impressions.
               </p>
             </div>
 
@@ -188,13 +197,13 @@ function Dashboard() {
             </div>
 
             <div className="result-card">
-              <h3>Minimum Ad Frequency</h3>
-              <p className="value">{result.calculation.minAdFrequency}</p>
-              <p className="detail">Placements to reach everyone once</p>
+              <h3>Placement Details</h3>
+              <p className="value">{result.calculation.minAdFrequency} placements per brand</p>
+              <p className="detail">{result.calculation.maxPlacements} total slots available</p>
               <p className="explanation">
-                To guarantee every viewer sees at least one ad, you need {result.calculation.minAdFrequency} placements 
-                (one per viewing cycle). Maximum possible: {result.calculation.maxPlacements} placements 
-                (30% of stream time = {(result.calculation.inputs.streamLengthMinutes * 0.3).toFixed(0)} minutes of ads).
+                Each brand must appear {result.calculation.minAdFrequency} times (minimum frequency) to reach everyone. 
+                With {result.calculation.maxPlacements} total placement slots available (30% of {result.calculation.inputs.avgViewTimeMinutes} min average view time = {(result.calculation.inputs.avgViewTimeMinutes * 0.3).toFixed(1)} min of ads), 
+                you can accommodate {result.calculation.availableBrandSlots} brands at full reach.
               </p>
             </div>
           </div>
