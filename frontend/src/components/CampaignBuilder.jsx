@@ -9,7 +9,7 @@ function CampaignBuilder() {
   const [channelName, setChannelName] = useState('');
   const [streams, setStreams] = useState([]);
   const [currency, setCurrency] = useState('GBP');
-  const [campaignResult, setCampaignResult] = useState(null);
+  const [, setCampaignResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const exchangeRates = { GBP: 1, USD: 1.27 };
 
@@ -279,7 +279,7 @@ function CampaignBuilder() {
                 {streams.filter(s => s.result).map((stream, index) => (
                   <tr key={stream.id}>
                     <td>{stream.stream_type || `Stream ${index + 1}`}</td>
-                    <td>{industries.find(i => i.id == stream.industry_id)?.name}</td>
+                    <td>{industries.find(i => i.id === stream.industry_id)?.name}</td>
                     <td>{stream.total_views.toLocaleString()}</td>
                     <td>{stream.result.calculation.selectedFrequency}</td>
                     <td className="value-cell">
