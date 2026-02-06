@@ -1,0 +1,33 @@
+{
+  "services": [
+    {
+      "type": "web",
+      "name": "dizplai-cpm-calculator-api",
+      "runtime": "node",
+      "plan": "free",
+      "region": "oregon",
+      "buildCommand": "npm install",
+      "startCommand": "npm start",
+      "envVars": [
+        {
+          "key": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "key": "PORT",
+          "generateValue": true
+        }
+      ]
+    }
+  ],
+  "databases": [
+    {
+      "name": "dizplai-cpm-calculator-db",
+      "plan": "free",
+      "databaseName": "dizplai_cpm_calculator",
+      "user": "dizplai_user",
+      "region": "oregon",
+      "postgresMajorVersion": 15
+    }
+  ]
+}
