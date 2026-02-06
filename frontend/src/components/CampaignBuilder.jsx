@@ -29,7 +29,6 @@ function CampaignBuilder() {
       stream_length_minutes: 180,
       avg_view_time_minutes: 45,
       total_views: 50000,
-      frequency: 4,
       result: null
     }]);
   };
@@ -48,13 +47,16 @@ function CampaignBuilder() {
     const stream = streams.find(s => s.id === streamId);
     if (!stream) return;
 
+    // Calculate frequency automatically
+    const calculatedFrequency = Math.round(stream.stream_length_minutes / stream.avg_view_time_minutes);
+
     try {
       const response = await axios.post(`${API_URL}/api/calculator/calculate`, {
         industry_id: parseInt(stream.industry_id),
         stream_length_minutes: parseInt(stream.stream_length_minutes),
         avg_view_time_minutes: parseInt(stream.avg_view_time_minutes),
         total_views: parseInt(stream.total_views),
-        user_selected_frequency: parseInt(stream.frequency),
+        user_selected_frequency: calculatedFrequency,
         currency: currency,
         exchangeRate: currency === 'USD' ? 1 / exchangeRates.USD : 1
       });
@@ -138,6 +140,16 @@ function CampaignBuilder() {
       .reduce((sum, s) => sum + s.result.calculation.totalInventoryValue, 0);
   };
 
+  const getCalculatedFrequency = (stream) => {
+    if (!stream.stream_length_minutes || !stream.avg_view_time_minutes) return 0;
+    return Math.round(stream.stream_length_minutes / stream.avg_view_time_minutes);
+  };
+
+  const getMaxPlacements = (stream) => {
+    if (!stream.avg_view_time_minutes) return 0;
+    return Math.floor((stream.avg_view_time_minutes * 0.3) / 0.5);
+  };
+
   return (
     <div className="campaign-builder">
       <header className="header">
@@ -197,7 +209,7 @@ function CampaignBuilder() {
 
                 <div className="input-row">
                   <div className="input-group">
-                    <label>Content Type</label>
+                    <label>What category is your content?</label>
                     <select 
                       value={stream.industry_id}
                       onChange={(e) => updateStream(stream.id, 'industry_id', e.target.value)}
@@ -209,7 +221,7 @@ function CampaignBuilder() {
                   </div>
 
                   <div className="input-group">
-                    <label>Length (min)</label>
+                    <label>Expected duration? (min)</label>
                     <input 
                       type="number"
                       value={stream.stream_length_minutes}
@@ -220,7 +232,7 @@ function CampaignBuilder() {
 
                 <div className="input-row">
                   <div className="input-group">
-                    <label>Avg View Time (min)</label>
+                    <label>Average user view time? (min)</label>
                     <input 
                       type="number"
                       value={stream.avg_view_time_minutes}
@@ -229,7 +241,7 @@ function CampaignBuilder() {
                   </div>
 
                   <div className="input-group">
-                    <label>Total Views</label>
+                    <label>Average total live views?</label>
                     <input 
                       type="number"
                       value={stream.total_views}
@@ -238,13 +250,20 @@ function CampaignBuilder() {
                   </div>
                 </div>
 
-                <div className="input-group">
-                  <label>Ad Frequency</label>
-                  <input 
-                    type="number"
-                    value={stream.frequency}
-                    onChange={(e) => updateStream(stream.id, 'frequency', e.target.value)}
-                  />
+                <div className="input-row">
+                  <div className="input-group">
+                    <label>Minimum Ad Frequency</label>
+                    <div className="calculated-value-small">
+                      Each brand must appear {getCalculatedFrequency(stream)} times
+                    </div>
+                  </div>
+
+                  <div className="input-group">
+                    <label>Maximum Placements (30% Rule)</label>
+                    <div className="calculated-value-small">
+                      Slots for up to {getMaxPlacements(stream)} brands
+                    </div>
+                  </div>
                 </div>
 
                 <button 

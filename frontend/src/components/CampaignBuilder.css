@@ -281,6 +281,18 @@
   transform: none;
 }
 
+.calculated-value-small {
+  background: rgba(0, 212, 170, 0.15);
+  border: 2px solid #00d4aa;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #00d4aa;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
 @media (max-width: 768px) {
   .input-row {
     grid-template-columns: 1fr;

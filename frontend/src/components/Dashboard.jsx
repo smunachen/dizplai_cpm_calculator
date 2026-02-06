@@ -10,13 +10,11 @@ function Dashboard() {
   const [streamLength, setStreamLength] = useState(180);
   const [avgViewTime, setAvgViewTime] = useState(45);
   const [totalViews, setTotalViews] = useState(50000);
-  const [frequency, setFrequency] = useState(4);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [currency, setCurrency] = useState('GBP');
-  const exchangeRates = { GBP: 1, USD: 1.27 }; // GBP to USD rate
+  const exchangeRates = { GBP: 1, USD: 1.27 };
 
-  // Fetch industries on mount
   useEffect(() => {
     axios.get(`${API_URL}/api/benchmarks/industries`)
       .then(response => {
@@ -35,7 +33,7 @@ function Dashboard() {
       stream_length_minutes: parseInt(streamLength),
       avg_view_time_minutes: parseInt(avgViewTime),
       total_views: parseInt(totalViews),
-      user_selected_frequency: parseInt(frequency),
+      user_selected_frequency: Math.round(parseInt(streamLength) / parseInt(avgViewTime)),
       currency: currency,
       exchangeRate: currency === 'USD' ? 1 / exchangeRates.USD : 1
     })
@@ -67,7 +65,7 @@ function Dashboard() {
           <h2>Stream Parameters</h2>
           
           <div className="input-group">
-            <label>Content Type</label>
+            <label>What category is your content?</label>
             <select value={selectedIndustry} onChange={(e) => setSelectedIndustry(e.target.value)}>
               {industries.map(ind => (
                 <option key={ind.id} value={ind.id}>{ind.name}</option>
@@ -76,7 +74,7 @@ function Dashboard() {
           </div>
 
           <div className="input-group">
-            <label>Stream Length (minutes)</label>
+            <label>What is the expected duration of your stream? (minutes)</label>
             <input 
               type="number" 
               value={streamLength} 
@@ -85,7 +83,7 @@ function Dashboard() {
           </div>
 
           <div className="input-group">
-            <label>Average View Time (minutes)</label>
+            <label>For similar streams in the past, what is the average user view time? (minutes)</label>
             <input 
               type="number" 
               value={avgViewTime} 
@@ -94,7 +92,7 @@ function Dashboard() {
           </div>
 
           <div className="input-group">
-            <label>Total Views</label>
+            <label>For past streams, what is the average total live views?</label>
             <input 
               type="number" 
               value={totalViews} 
@@ -103,12 +101,25 @@ function Dashboard() {
           </div>
 
           <div className="input-group">
-            <label>Ad Frequency (placements)</label>
-            <input 
-              type="number" 
-              value={frequency} 
-              onChange={(e) => setFrequency(e.target.value)}
-            />
+            <label>Minimum Ad Frequency</label>
+            <div className="calculated-value">
+              Each brand must appear {Math.round(streamLength / avgViewTime)} times
+            </div>
+            <p className="input-help">
+              Based on your stream length and average view time, ads must appear {Math.round(streamLength / avgViewTime)} times 
+              to ensure every viewer sees at least one placement.
+            </p>
+          </div>
+
+          <div className="input-group">
+            <label>Maximum Ad Placements (30% Rule)</label>
+            <div className="calculated-value">
+              There are slots available for up to {Math.floor((avgViewTime * 0.3) / 0.5)} brands
+            </div>
+            <p className="input-help">
+              With {avgViewTime} minutes average view time, viewers can see up to {Math.floor((avgViewTime * 0.3) / 0.5)} ads 
+              (30% of viewing time = {(avgViewTime * 0.3).toFixed(1)} minutes = {Math.floor((avgViewTime * 0.3) / 0.5)} × 30-second slots).
+            </p>
           </div>
 
           <div className="input-group">
