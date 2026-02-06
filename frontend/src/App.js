@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import CampaignBuilder from './components/CampaignBuilder';
 import CampaignDashboard from './components/CampaignDashboard';
+import MultiBrandSplit from './components/MultiBrandSplit';
 import MethodologyModal from './components/MethodologyModal';
 import './App.css';
 
 function App() {
-  const [activeView, setActiveView] = useState('single'); // 'single', 'campaign', or 'dashboard'
+  const [activeView, setActiveView] = useState('single'); // 'single', 'campaign', 'dashboard', or 'multibrand'
   const [showMethodology, setShowMethodology] = useState(false);
 
   return (
@@ -34,6 +35,12 @@ function App() {
               Saved Campaigns
             </button>
             <button 
+              className={activeView === 'multibrand' ? 'nav-btn active' : 'nav-btn'}
+              onClick={() => setActiveView('multibrand')}
+            >
+              Multi-Brand Split
+            </button>
+            <button 
               className="nav-btn methodology-btn"
               onClick={() => setShowMethodology(true)}
             >
@@ -46,6 +53,7 @@ function App() {
       {activeView === 'single' && <Dashboard />}
       {activeView === 'campaign' && <CampaignBuilder />}
       {activeView === 'dashboard' && <CampaignDashboard />}
+      {activeView === 'multibrand' && <MultiBrandSplit />}
 
       <MethodologyModal 
         isOpen={showMethodology} 
