@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../config/database');
+const { pool } = require('../config/database');
 
 // Admin password (change this to something secure)
 const ADMIN_PASSWORD = 'dizplai2026admin';
