@@ -107,33 +107,67 @@ function Dashboard() {
         </div>
 
         {result && (
-          <div className="results-section">
-            <h2>Sponsorship Value</h2>
-            
-            <div className="result-card highlight">
-              <h3>Total Inventory Value</h3>
-              <p className="value">${result.calculation.totalInventoryValue.toLocaleString()}</p>
-            </div>
+  <div className="results-section">
+    <h2>Sponsorship Value</h2>
+    
+    <div className="result-card highlight">
+      <h3>Total Inventory Value</h3>
+      <p className="value">${result.calculation.totalInventoryValue.toLocaleString()}</p>
+      <p className="explanation">
+        This is the total value of all {result.calculation.selectedFrequency} ad placements. 
+        Calculated as: Cost Per Placement (${result.calculation.costPerPlacement.toLocaleString()}) 
+        × Frequency ({result.calculation.selectedFrequency}) = ${result.calculation.totalInventoryValue.toLocaleString()}
+      </p>
+    </div>
 
-            <div className="result-card">
-              <h3>Premium CPM</h3>
-              <p className="value">${result.calculation.premiumCPM}</p>
-              <p className="detail">{result.calculation.totalMultiplier}x base CPM</p>
-            </div>
+    <div className="result-card">
+      <h3>Premium CPM</h3>
+      <p className="value">${result.calculation.premiumCPM}</p>
+      <p className="detail">{result.calculation.totalMultiplier}x base CPM</p>
+      <p className="explanation">
+        Your base {result.industry.name} CPM (${result.calculation.inputs.baseCPM}) 
+        is multiplied by {result.calculation.totalMultiplier}x to account for: 
+        unskippable format (1.8x), integrated content (2.5x), live streaming (1.3x), 
+        and high-attention environment (1.4x).
+      </p>
+    </div>
 
-            <div className="result-card">
-              <h3>Cost Per Placement</h3>
-              <p className="value">${result.calculation.costPerPlacement.toLocaleString()}</p>
-              <p className="detail">Per 30-second ad</p>
-            </div>
+    <div className="result-card">
+      <h3>Cost Per Placement</h3>
+      <p className="value">${result.calculation.costPerPlacement.toLocaleString()}</p>
+      <p className="detail">Per 30-second ad</p>
+      <p className="explanation">
+        Calculated as: (Premium CPM ÷ 1,000) × Total Views. 
+        Each 30-second sponsorship placement reaches all {result.calculation.inputs.totalViews.toLocaleString()} views 
+        at the premium rate of ${result.calculation.premiumCPM} per thousand impressions.
+      </p>
+    </div>
 
-            <div className="result-card">
-              <h3>Effective Unique Viewers</h3>
-              <p className="value">{result.calculation.effectiveUniqueViewers.toLocaleString()}</p>
-              <p className="detail">Estimated unique audience</p>
-            </div>
-          </div>
-        )}
+    <div className="result-card">
+      <h3>Effective Unique Viewers</h3>
+      <p className="value">{result.calculation.effectiveUniqueViewers.toLocaleString()}</p>
+      <p className="detail">Estimated unique audience</p>
+      <p className="explanation">
+        With a {result.calculation.inputs.streamLengthMinutes}-minute stream and 
+        {result.calculation.inputs.avgViewTimeMinutes}-minute average view time, 
+        viewers cycle through {result.calculation.uniqueWatchSessions.toFixed(1)} times. 
+        This means {result.calculation.inputs.totalViews.toLocaleString()} total views 
+        represents approximately {result.calculation.effectiveUniqueViewers.toLocaleString()} unique people.
+      </p>
+    </div>
+
+    <div className="result-card">
+      <h3>Minimum Ad Frequency</h3>
+      <p className="value">{result.calculation.minAdFrequency}</p>
+      <p className="detail">Placements to reach everyone once</p>
+      <p className="explanation">
+        To guarantee every viewer sees at least one ad, you need {result.calculation.minAdFrequency} placements 
+        (one per viewing cycle). Maximum possible: {result.calculation.maxPlacements} placements 
+        (30% of stream time = {(result.calculation.inputs.streamLengthMinutes * 0.3).toFixed(0)} minutes of ads).
+      </p>
+    </div>
+  </div>
+)}
       </div>
     </div>
   );

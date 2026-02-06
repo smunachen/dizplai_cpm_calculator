@@ -135,6 +135,15 @@
   margin-top: 0.25rem;
 }
 
+.result-card .explanation {
+  color: #9ca3b8;
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  line-height: 1.5;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 @media (max-width: 768px) {
   .calculator-container {
     grid-template-columns: 1fr;
