@@ -95,10 +95,10 @@ class PricingEngine {
       );
     }
     
-    // Step 10: Calculate total inventory value (ONE SLOT = ONE ACTIVATION)
-    // A brand pays for ONE activation which includes all minimum frequency placements
-    const totalInventoryValue = costPerActivation; // Single brand buying one slot
-    
+    // Step 10: Calculate total inventory value (MAXIMUM REVENUE POTENTIAL)
+    // Total value if ALL available brand slots are sold
+    const totalInventoryValue = costPerActivation * availableBrandSlots;
+
     // Return all calculated metrics
     return {
       // Input values (for reference)

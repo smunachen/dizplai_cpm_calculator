@@ -143,8 +143,10 @@ function Dashboard() {
               <h3>Total Inventory Value (Single Brand)</h3>
               <p className="value">{formatCurrency(result.calculation.totalInventoryValue)}</p>
               <p className="explanation">
-                This is the value for ONE BRAND to reach your entire audience. One brand pays {formatCurrency(result.calculation.costPerActivation)} for one activation, which includes {result.calculation.minAdFrequency} placements automatically to guarantee every viewer sees their ad at least once.
-              </p>
+  This is the MAXIMUM REVENUE if all {result.calculation.availableBrandSlots} brand slots are sold. 
+  Each brand pays {formatCurrency(result.calculation.costPerActivation)} per activation × {result.calculation.availableBrandSlots} available slots = {formatCurrency(result.calculation.totalInventoryValue)}. 
+  Each activation includes {result.calculation.minAdFrequency} placements to guarantee full audience reach.
+</p>
             </div>
 
             <div className="result-card">
