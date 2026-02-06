@@ -14,36 +14,72 @@ function MethodologyModal({ isOpen, onClose }) {
 
         <div className="methodology-section">
           <h3>📊 Industry CPM Benchmarks</h3>
-          <p>We use average CPM rates for standard video advertising from authoritative industry sources:</p>
+          <p>We use average CPM rates for video advertising from authoritative industry sources (2025-2026 data):</p>
           
           <div className="benchmark-grid">
             <div className="benchmark-item">
-              <div><strong>Gambling:</strong> <span className="cpm-value">£50 CPM</span></div>
-              <span className="source">WordStream 2024</span>
+              <div><strong>Finance & Investing:</strong> <span className="cpm-value">£40 CPM</span></div>
+              <span className="source">OutlierKit, Lenos, upGrowth 2025-2026</span>
             </div>
             <div className="benchmark-item">
-              <div><strong>Banking:</strong> <span className="cpm-value">£35 CPM</span></div>
-              <span className="source">eMarketer 2024</span>
+              <div><strong>Legal & Insurance:</strong> <span className="cpm-value">£35 CPM</span></div>
+              <span className="source">OutlierKit, YouTube Tools Hub 2026</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Real Estate:</strong> <span className="cpm-value">£32 CPM</span></div>
+              <span className="source">YouTube Tools Hub, OutlierKit 2026</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Business & Entrepreneurship:</strong> <span className="cpm-value">£28 CPM</span></div>
+              <span className="source">YouTube Tools Hub, Lenos 2026</span>
             </div>
             <div className="benchmark-item">
               <div><strong>Sports:</strong> <span className="cpm-value">£25 CPM</span></div>
               <span className="source">eMarketer, IAB 2024</span>
             </div>
             <div className="benchmark-item">
-              <div><strong>Fashion:</strong> <span className="cpm-value">£20 CPM</span></div>
-              <span className="source">Statista 2024</span>
+              <div><strong>Tech & SaaS:</strong> <span className="cpm-value">£24 CPM</span></div>
+              <span className="source">YouTube Tools Hub, upGrowth 2026</span>
             </div>
             <div className="benchmark-item">
-              <div><strong>Food Delivery:</strong> <span className="cpm-value">£20 CPM</span></div>
-              <span className="source">WordStream 2024</span>
+              <div><strong>Automotive:</strong> <span className="cpm-value">£23 CPM</span></div>
+              <span className="source">AWISEE, upGrowth 2025</span>
             </div>
             <div className="benchmark-item">
-              <div><strong>Beauty:</strong> <span className="cpm-value">£18 CPM</span></div>
-              <span className="source">Statista 2024</span>
+              <div><strong>Digital Marketing:</strong> <span className="cpm-value">£20 CPM</span></div>
+              <span className="source">TastyEdits, OutlierKit 2025</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Education & Tutorials:</strong> <span className="cpm-value">£20 CPM</span></div>
+              <span className="source">Lenos, AWISEE 2025-2026</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Beauty & Fashion:</strong> <span className="cpm-value">£18 CPM</span></div>
+              <span className="source">Statista 2024, Lenos 2025</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Health & Wellness:</strong> <span className="cpm-value">£18 CPM</span></div>
+              <span className="source">upGrowth, OutlierKit 2026</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>News & Politics:</strong> <span className="cpm-value">£12 CPM</span></div>
+              <span className="source">Multiple sources 2025-2026</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Lifestyle & Entertainment:</strong> <span className="cpm-value">£10 CPM</span></div>
+              <span className="source">AWISEE, TastyEdits 2025</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Gaming:</strong> <span className="cpm-value">£10 CPM</span></div>
+              <span className="source">Lenos, OutlierKit 2025-2026</span>
+            </div>
+            <div className="benchmark-item">
+              <div><strong>Music & Podcasts:</strong> <span className="cpm-value">£8 CPM</span></div>
+              <span className="source">Lenos 2025</span>
             </div>
           </div>
 
-          <p className="note">These represent typical rates for standard YouTube pre-roll ads (skippable, separate from content).</p>
+          <p className="note">These represent typical rates for standard YouTube pre-roll ads (skippable, separate from content). Our calculator uses the middle value (average CPM) as the base rate.</p>
         </div>
 
         <div className="methodology-section">
@@ -131,6 +167,12 @@ function MethodologyModal({ isOpen, onClose }) {
           <h3>📚 Data Sources</h3>
           <p>All benchmarks and multipliers sourced from:</p>
           <ul className="sources-list">
+            <li><strong>OutlierKit</strong> - YouTube niche profitability data and CPM analytics</li>
+            <li><strong>Lenos</strong> - YouTube CPM & RPM rates by niche 2025-2026</li>
+            <li><strong>upGrowth</strong> - YouTube CPM rates and monetization data</li>
+            <li><strong>YouTube Tools Hub</strong> - High CPM YouTube niches research</li>
+            <li><strong>AWISEE</strong> - Profitable YouTube niches analysis</li>
+            <li><strong>TastyEdits</strong> - Most profitable YouTube niches by CPM</li>
             <li><strong>eMarketer</strong> - Industry-standard advertising data</li>
             <li><strong>Statista</strong> - Global advertising statistics</li>
             <li><strong>IAB</strong> (Interactive Advertising Bureau) - Trade association reports</li>
@@ -139,7 +181,7 @@ function MethodologyModal({ isOpen, onClose }) {
             <li><strong>Nielsen</strong> - Viewing metrics and TV advertising</li>
             <li><strong>YouTube Studies</strong> - Platform-specific CPM data</li>
           </ul>
-          <p className="note">Data updated quarterly (last update: January 2025)</p>
+          <p className="note">Data updated quarterly (last update: February 2026)</p>
         </div>
 
         <div className="methodology-footer">
