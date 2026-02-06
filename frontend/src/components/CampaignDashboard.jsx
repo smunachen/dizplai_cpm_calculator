@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { generateCampaignPDF } from '../utils/pdfGenerator';
 import './CampaignDashboard.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -186,6 +187,18 @@ function CampaignDashboard() {
                 </tr>
               </tfoot>
             </table>
+
+            <button 
+              className="export-pdf-btn"
+              onClick={() => generateCampaignPDF(
+                selectedCampaign.campaign, 
+                selectedCampaign.streams, 
+                selectedCampaign.total_value,
+                currency
+              )}
+            >
+              📄 Export to PDF
+            </button>
           </div>
         )}
       </div>

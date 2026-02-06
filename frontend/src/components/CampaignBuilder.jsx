@@ -9,7 +9,6 @@ function CampaignBuilder() {
   const [channelName, setChannelName] = useState('');
   const [streams, setStreams] = useState([]);
   const [currency, setCurrency] = useState('GBP');
-  const [, setCampaignResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const exchangeRates = { GBP: 1, USD: 1.27 };
 
@@ -61,6 +60,15 @@ function CampaignBuilder() {
       });
 
       updateStream(streamId, 'result', response.data);
+      
+      // Only add a new stream if all current streams are calculated
+      setTimeout(() => {
+        const allCalculated = streams.every(s => s.id === streamId || s.result);
+        if (allCalculated) {
+          addStream();
+        }
+      }, 100);
+      
     } catch (error) {
       console.error('Error calculating stream:', error);
     }
@@ -103,9 +111,14 @@ function CampaignBuilder() {
         }))
       };
 
-      const response = await axios.post(`${API_URL}/api/campaigns/create`, campaignData);
-      setCampaignResult(response.data);
+      await axios.post(`${API_URL}/api/campaigns/create`, campaignData);
       setLoading(false);
+      alert('Campaign saved successfully! View it in Saved Campaigns.');
+      
+      // Reset form
+      setChannelName('');
+      setStreams([]);
+      
     } catch (error) {
       console.error('Error creating campaign:', error);
       setLoading(false);
@@ -154,9 +167,11 @@ function CampaignBuilder() {
             </select>
           </div>
 
-          <button className="add-stream-btn" onClick={addStream}>
-            + Add Stream
-          </button>
+          {streams.length === 0 && (
+            <button className="add-stream-btn" onClick={addStream}>
+              + Add First Stream
+            </button>
+          )}
         </div>
 
         <div className="streams-list">
@@ -256,7 +271,7 @@ function CampaignBuilder() {
 
           {streams.length === 0 && (
             <div className="empty-state">
-              <p>No streams added yet. Click "Add Stream" to get started.</p>
+              <p>No streams added yet. Click "Add First Stream" to get started.</p>
             </div>
           )}
         </div>

@@ -293,3 +293,23 @@
     padding: 0.5rem;
   }
 }
+
+.export-pdf-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #00d4aa, #00b894);
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 1.5rem;
+}
+
+.export-pdf-btn:hover {
+  background: linear-gradient(135deg, #00e5bb, #00c9a5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
+}
