@@ -1,5 +1,5 @@
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export const generateCampaignPDF = (campaign, streams, totalValue, currency = 'GBP') => {
   const doc = new jsPDF();
@@ -71,7 +71,7 @@ export const generateCampaignPDF = (campaign, streams, totalValue, currency = 'G
     formatCurrency(stream.total_inventory_value)
   ]);
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: 90,
     head: [['Stream Type', 'Content', 'Length', 'Views', 'Placements', 'Value']],
     body: tableData,
