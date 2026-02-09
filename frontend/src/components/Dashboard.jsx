@@ -66,7 +66,7 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <div className="dashboard-content">
-        <h1>Single Stream Calculator</h1>
+        <h1 style={{color: 'white'}}>Single Stream Calculator</h1>
         
         <div className="input-section">
           <h2>Stream Parameters</h2>

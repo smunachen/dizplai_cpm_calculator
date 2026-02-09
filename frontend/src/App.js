@@ -14,7 +14,15 @@ function App() {
     <div className="App">
       <nav className="main-nav">
         <div className="nav-container">
-          <div className="nav-logo">Dizplai CPM Calculator</div>
+         <div className="nav-logo">
+          <img 
+           src="https://dizplai.com/wp-content/uploads/2025/09/logo-768x252.png" 
+           alt="Dizplai Logo" 
+           className="logo-img"
+           style={{height: '30px', width: 'auto', verticalAlign: 'middle'}}
+           />
+          <span style={{marginLeft: '10px'}}>Stream Value Calculator</span>
+          </div>
           <div className="nav-buttons">
             <button 
               className={activeView === 'single' ? 'nav-btn active' : 'nav-btn'}
