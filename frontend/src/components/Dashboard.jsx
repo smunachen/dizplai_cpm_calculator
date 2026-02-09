@@ -23,9 +23,14 @@ function Dashboard() {
   useEffect(() => {
     axios.get(`${API_URL}/api/benchmarks/industries`)
       .then(response => {
-        setIndustries(response.data);
+        // Ensure response.data is an array
+        const industriesData = Array.isArray(response.data) ? response.data : response.data.industries || [];
+        setIndustries(industriesData);
       })
-      .catch(error => console.error('Error fetching industries:', error));
+      .catch(error => {
+        console.error('Error fetching industries:', error);
+        setIndustries([]); // Set empty array on error
+      });
   }, []);
 
   const handleCalculate = () => {
@@ -58,7 +63,7 @@ function Dashboard() {
     return `${symbol}${convertedAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
-  return (
+ return (
     <div className="dashboard-container">
       <div className="dashboard-content">
         <h1>Single Stream Calculator</h1>
@@ -74,7 +79,7 @@ function Dashboard() {
               className="input-field"
             >
               <option value="">Select industry...</option>
-              {industries.map(industry => (
+              {Array.isArray(industries) && industries.map(industry => (
                 <option key={industry.id} value={industry.id}>
                   {industry.name}
                 </option>
