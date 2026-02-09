@@ -235,10 +235,9 @@ function Dashboard() {
               <p className="value">{formatCurrency(result.calculation.costPerPlacement)}</p>
               <p className="detail">Single 2-minute sponsored segment</p>
               <p className="explanation">
-                Each 2-minute placement reaches {result.calculation.concurrentViewers.toLocaleString()} concurrent viewers, 
-                generating {result.calculation.viewerMinutesPerPlacement.toLocaleString()} viewer-minutes of branded attention. 
-                Premium CPM ({formatCurrency(result.calculation.premiumCPM)}) is applied to total viewer-minutes: 
-                ({formatCurrency(result.calculation.premiumCPM)} ÷ 1,000) × {result.calculation.viewerMinutesPerPlacement.toLocaleString()} = {formatCurrency(result.calculation.costPerPlacement)} per placement.
+                Each 2-minute placement reaches {result.calculation.concurrentViewers.toLocaleString()} concurrent viewers. 
+                Premium CPM ({formatCurrency(result.calculation.premiumCPM)}) is applied to concurrent audience: 
+                ({formatCurrency(result.calculation.premiumCPM)} ÷ 1,000) × {result.calculation.concurrentViewers.toLocaleString()} = {formatCurrency(result.calculation.costPerPlacement)} per placement.
               </p>
             </div>
 

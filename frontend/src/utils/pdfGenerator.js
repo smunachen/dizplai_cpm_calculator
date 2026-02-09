@@ -21,10 +21,10 @@ export const generateCampaignPDF = (campaign, streams, totalValue, currency = 'G
   };
 
   // Header - Company Name
-  doc.setFillColor(10, 15, 26); // Dark background
+  doc.setFillColor(10, 15, 26);
   doc.rect(0, 0, 210, 40, 'F');
   
-  doc.setTextColor(0, 212, 170); // Teal color
+  doc.setTextColor(0, 212, 170);
   doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
   doc.text('DIZPLAI', 15, 20);
@@ -110,9 +110,9 @@ export const generateCampaignPDF = (campaign, streams, totalValue, currency = 'G
   doc.setTextColor(60, 60, 60);
   
   const methodologyText = [
-    'This sponsorship valuation uses industry-validated CPM benchmarks applied to viewer-minutes',
-    'of branded attention. Each 2-minute placement is priced based on total viewer-minutes:',
-    'Concurrent Viewers × Placement Duration (2 min). Research-backed premium multipliers:',
+    'This sponsorship valuation uses industry-validated CPM benchmarks with research-backed',
+    'premium multipliers. Each 2-minute placement is priced based on concurrent audience reach.',
+    'Premium multipliers account for:',
     '',
     '• Unskippable Format (1.8x) - Integrated content, guaranteed viewership',
     '• Integrated Content (2.5x) - Brand integration vs interruptive ads',
@@ -120,7 +120,7 @@ export const generateCampaignPDF = (campaign, streams, totalValue, currency = 'G
     '• High-Attention Environment (1.4x) - Focused viewing context',
     '',
     'Calculated using geometric mean methodology for balanced, defensible pricing based on',
-    'audience attention duration. Data from OutlierKit, Lenos, upGrowth, eMarketer, IAB.'
+    'concurrent audience reach. Data from OutlierKit, Lenos, upGrowth, eMarketer, IAB.'
   ];
 
   let textY = finalY + 7;
@@ -221,8 +221,7 @@ export const generateSingleStreamPDF = (result, streamParams, currency = 'GBP') 
     ['Stream Length', `${streamParams.streamLength} minutes`],
     ['Average View Time', `${streamParams.avgViewTime} minutes`],
     ['Total Views', parseInt(streamParams.totalViews).toLocaleString()],
-    ['Concurrent Viewers', result.calculation.concurrentViewers.toLocaleString()],
-    ['Viewer-Minutes Per Placement', result.calculation.viewerMinutesPerPlacement.toLocaleString()]
+    ['Concurrent Viewers', result.calculation.concurrentViewers.toLocaleString()]
   ];
 
   autoTable(doc, {
@@ -291,9 +290,9 @@ export const generateSingleStreamPDF = (result, streamParams, currency = 'GBP') 
   doc.setTextColor(60, 60, 60);
   
   const methodologyText = [
-    'This valuation uses a viewer-minutes pricing model: CPM is applied to total branded attention',
-    '(concurrent viewers × 2-minute placement duration), not just audience count. This reflects',
-    'the true value of brand exposure over time. Premium multipliers account for:',
+    'This valuation uses industry-validated CPM benchmarks applied to concurrent audience reach.',
+    'Each 2-minute placement is priced based on the average live audience at any moment.',
+    'Premium multipliers account for:',
     '',
     '• Unskippable Format (1.8x) - Integrated content, guaranteed viewership',
     '• Integrated Content (2.5x) - Brand integration vs interruptive ads',

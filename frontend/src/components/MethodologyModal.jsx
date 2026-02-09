@@ -146,30 +146,6 @@ function MethodologyModal({ isOpen, onClose }) {
         </div>
 
         <div className="methodology-section">
-          <h3>⏱️ Viewer-Minutes Pricing Model</h3>
-          <p>CPM is applied to <strong>viewer-minutes of attention</strong>, not just viewer count. This reflects the true value of brand exposure.</p>
-          
-          <div className="math-explanation">
-            <div className="math-step">
-              <strong>Concurrent Viewers:</strong> <span style={{color: '#d4d6dd'}}>Average live audience at any moment</span>
-              <code>Total Views × (Avg View Time ÷ Stream Length)</code>
-            </div>
-            
-            <div className="math-step">
-              <strong>Viewer-Minutes Per Placement:</strong> <span style={{color: '#d4d6dd'}}>Total attention captured</span>
-              <code>Concurrent Viewers × Placement Duration (2 minutes)</code>
-            </div>
-            
-            <div className="math-step">
-              <strong>Cost Per Placement:</strong> <span style={{color: '#d4d6dd'}}>CPM applied to viewer-minutes</span>
-              <code>(Premium CPM ÷ 1,000) × Viewer-Minutes</code>
-            </div>
-          </div>
-          
-          <p className="note"><strong>Why viewer-minutes?</strong> A 2-minute placement reaching 15,000 viewers generates 30,000 viewer-minutes of branded attention. Pricing only on viewer count ignores exposure duration. This model aligns with how sponsors actually value persistent branding (overlays, lower-thirds, score bugs).</p>
-        </div>
-
-        <div className="methodology-section">
           <h3>💡 Example Calculation</h3>
           <div className="example-box">
             <p><strong>Scenario:</strong> Sports live stream, 180 min, 15 min avg view time, 50,000 total views</p>
@@ -178,13 +154,12 @@ function MethodologyModal({ isOpen, onClose }) {
               <li>Premium Multiplier: 2.04x (geometric mean adjusted)</li>
               <li><strong>Premium CPM: £51.00</strong></li>
               <li>Concurrent Viewers: 50,000 × (15 ÷ 180) = <strong>4,167 viewers</strong></li>
-              <li>Viewer-Minutes Per Placement: 4,167 × 2 = <strong>8,334 viewer-minutes</strong></li>
-              <li>Cost per placement: (£51.00 ÷ 1,000) × 8,334 = <strong>£425</strong></li>
+              <li>Cost per placement: (£51.00 ÷ 1,000) × 4,167 = <strong>£212</strong></li>
               <li>Minimum frequency: 180 ÷ 15 = <strong>12 placements</strong> (to reach everyone)</li>
-              <li>Cost per activation: £425 × 12 = <strong>£5,100</strong></li>
+              <li>Cost per activation: £212 × 12 = <strong>£2,544</strong></li>
               <li>Maximum placements: (180 × 0.3) ÷ 2 = <strong>27 slots</strong></li>
               <li>Available brand slots: 27 ÷ 12 = <strong>2 brands</strong></li>
-              <li><strong>Total Inventory Value: 2 × £425 = £850</strong></li>
+              <li><strong>Total Inventory Value: 2 × £2,544 = £5,088</strong></li>
             </ul>
           </div>
         </div>
