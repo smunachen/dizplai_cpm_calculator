@@ -79,9 +79,9 @@ class PricingEngine {
     const leftoverPlacements = maxPlacements % minAdFrequency;
     
     // Step 8: Calculate cost per activation (one slot = all placements for one brand)
-    // This is the cost for ONE BRAND to reach the full audience
-    // CPM = cost per 1000 impressions, so divide by 1000 and multiply by total views
-    const costPerPlacement = (premiumCPM / 1000) * totalViews;
+    // This is the cost for ONE BRAND to reach the UNIQUE audience
+    // CPM = cost per 1000 impressions, so divide by 1000 and multiply by EFFECTIVE UNIQUE VIEWERS
+    const costPerPlacement = (premiumCPM / 1000) * effectiveUniqueViewers;
     const costPerActivation = costPerPlacement * minAdFrequency; // One brand buys ONE activation
     
     // Step 9: Determine selected frequency (for backwards compatibility)
