@@ -110,16 +110,17 @@ export const generateCampaignPDF = (campaign, streams, totalValue, currency = 'G
   doc.setTextColor(60, 60, 60);
   
   const methodologyText = [
-    'This sponsorship valuation is calculated using industry-validated CPM benchmarks with',
-    'research-backed premium multipliers accounting for:',
+    'This sponsorship valuation uses industry-validated CPM benchmarks applied to viewer-minutes',
+    'of branded attention. Each 2-minute placement is priced based on total viewer-minutes:',
+    'Concurrent Viewers × Placement Duration (2 min). Research-backed premium multipliers:',
     '',
     '• Unskippable Format (1.8x) - Integrated content, guaranteed viewership',
     '• Integrated Content (2.5x) - Brand integration vs interruptive ads',
     '• Live Streaming (1.3x) - Real-time engagement premium',
     '• High-Attention Environment (1.4x) - Focused viewing context',
     '',
-    'Values are calculated using geometric mean methodology to provide balanced, defensible',
-    'pricing based on industry standards from eMarketer, Statista, IAB, and WordStream.'
+    'Calculated using geometric mean methodology for balanced, defensible pricing based on',
+    'audience attention duration. Data from OutlierKit, Lenos, upGrowth, eMarketer, IAB.'
   ];
 
   let textY = finalY + 7;
@@ -135,7 +136,7 @@ export const generateCampaignPDF = (campaign, streams, totalValue, currency = 'G
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
     doc.text(
-      `Dizplai CPM Calculator | Page ${i} of ${pageCount}`,
+      `Dizplai Stream Value Calculator | Page ${i} of ${pageCount}`,
       105,
       285,
       { align: 'center' }
@@ -220,7 +221,8 @@ export const generateSingleStreamPDF = (result, streamParams, currency = 'GBP') 
     ['Stream Length', `${streamParams.streamLength} minutes`],
     ['Average View Time', `${streamParams.avgViewTime} minutes`],
     ['Total Views', parseInt(streamParams.totalViews).toLocaleString()],
-    ['Effective Unique Viewers', result.calculation.effectiveUniqueViewers.toLocaleString()]
+    ['Concurrent Viewers', result.calculation.concurrentViewers.toLocaleString()],
+    ['Viewer-Minutes Per Placement', result.calculation.viewerMinutesPerPlacement.toLocaleString()]
   ];
 
   autoTable(doc, {
@@ -232,8 +234,8 @@ export const generateSingleStreamPDF = (result, streamParams, currency = 'GBP') 
       cellPadding: 3
     },
     columnStyles: {
-      0: { fontStyle: 'bold', cellWidth: 60 },
-      1: { cellWidth: 130 }
+      0: { fontStyle: 'bold', cellWidth: 70 },
+      1: { cellWidth: 120 }
     }
   });
 
@@ -289,17 +291,17 @@ export const generateSingleStreamPDF = (result, streamParams, currency = 'GBP') 
   doc.setTextColor(60, 60, 60);
   
   const methodologyText = [
-    'This sponsorship valuation is calculated using industry-validated CPM benchmarks with',
-    'research-backed premium multipliers accounting for:',
+    'This valuation uses a viewer-minutes pricing model: CPM is applied to total branded attention',
+    '(concurrent viewers × 2-minute placement duration), not just audience count. This reflects',
+    'the true value of brand exposure over time. Premium multipliers account for:',
     '',
     '• Unskippable Format (1.8x) - Integrated content, guaranteed viewership',
     '• Integrated Content (2.5x) - Brand integration vs interruptive ads',
     '• Live Streaming (1.3x) - Real-time engagement premium',
     '• High-Attention Environment (1.4x) - Focused viewing context',
     '',
-    'Values are calculated using geometric mean methodology to provide balanced, defensible',
-    'pricing based on unique audience reach. Industry data sourced from OutlierKit, Lenos,',
-    'upGrowth, YouTube Tools Hub, eMarketer, Statista, and IAB.'
+    'Geometric mean methodology provides balanced, defensible pricing. Industry data sourced',
+    'from OutlierKit, Lenos, upGrowth, YouTube Tools Hub, eMarketer, Statista, and IAB.'
   ];
 
   let textY = finalY + 7;
@@ -334,4 +336,3 @@ export const generateSingleStreamPDF = (result, streamParams, currency = 'GBP') 
   // Save PDF
   doc.save(filename);
 };
-
