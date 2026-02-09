@@ -24,13 +24,12 @@ function Dashboard() {
   useEffect(() => {
     axios.get(`${API_URL}/api/benchmarks/industries`)
       .then(response => {
-        // Backend returns {success: true, count: 15, data: [...]}
         const industriesData = response.data.data || response.data || [];
         setIndustries(Array.isArray(industriesData) ? industriesData : []);
       })
       .catch(error => {
         console.error('Error fetching industries:', error);
-        setIndustries([]); // Set empty array on error
+        setIndustries([]);
       });
   }, []);
 
@@ -222,33 +221,33 @@ function Dashboard() {
               <p className="value">{formatCurrency(result.calculation.totalInventoryValue)}</p>
               <p className="explanation">
                 This is the MAXIMUM REVENUE if all {result.calculation.availableBrandSlots} brand slots are sold. 
-                Each brand pays {formatCurrency(result.calculation.costPerActivation)} per activation × {result.calculation.availableBrandSlots} available slots = {formatCurrency(result.calculation.totalInventoryValue)}. 
+                Each slot costs {formatCurrency(result.calculation.costPerPlacement)} × {result.calculation.availableBrandSlots} available slots = {formatCurrency(result.calculation.totalInventoryValue)}. 
                 {result.calculation.isPartialReach ? (
                   <> <strong>Note:</strong> Cost reflects {result.calculation.audienceReachPercentage}% audience reach due to placement constraints.</>
                 ) : (
-                  <> Each activation includes {result.calculation.minAdFrequency} placements to guarantee full audience reach.</>
+                  <> Each brand needs {result.calculation.minAdFrequency} placements to reach the full concurrent audience of {result.calculation.concurrentViewers.toLocaleString()} viewers.</>
                 )}
+              </p>
+            </div>
+
+            <div className="result-card">
+              <h3>Cost Per Placement</h3>
+              <p className="value">{formatCurrency(result.calculation.costPerPlacement)}</p>
+              <p className="detail">Single 30-second ad slot</p>
+              <p className="explanation">
+                Each placement reaches {result.calculation.concurrentViewers.toLocaleString()} concurrent viewers 
+                at a premium CPM of {formatCurrency(result.calculation.premiumCPM)}. 
+                Calculation: ({formatCurrency(result.calculation.premiumCPM)} ÷ 1,000) × {result.calculation.concurrentViewers.toLocaleString()} = {formatCurrency(result.calculation.costPerPlacement)} per slot.
               </p>
             </div>
 
             <div className="result-card">
               <h3>Cost Per Activation</h3>
               <p className="value">{formatCurrency(result.calculation.costPerActivation)}</p>
-              <p className="detail">Includes {result.calculation.actualFrequency} placements</p>
+              <p className="detail">Full frequency package ({result.calculation.minAdFrequency} placements)</p>
               <p className="explanation">
-                Each brand buys ONE activation slot = {result.calculation.actualFrequency} × 30-second placements. 
-                {result.calculation.isPartialReach ? (
-                  <>
-                    <strong>⚠️ Partial reach:</strong> Only {result.calculation.actualFrequency} of {result.calculation.minAdFrequency} needed placements available. 
-                    Reaches {result.calculation.audienceReachPercentage}% of audience. 
-                    Full reach cost would be {formatCurrency(result.calculation.costPerActivationFull)}.
-                  </>
-                ) : (
-                  <>
-                    Cost per single placement: {formatCurrency(result.calculation.costPerPlacement)} × {result.calculation.actualFrequency} placements = {formatCurrency(result.calculation.costPerActivation)}. 
-                    This guarantees the brand reaches all {result.calculation.effectiveUniqueViewers.toLocaleString()} unique viewers.
-                  </>
-                )}
+                For brands wanting guaranteed full reach, they can buy an activation package of {result.calculation.minAdFrequency} placements. 
+                Cost: {formatCurrency(result.calculation.costPerPlacement)} × {result.calculation.minAdFrequency} = {formatCurrency(result.calculation.costPerActivation)}.
               </p>
             </div>
 
@@ -258,8 +257,8 @@ function Dashboard() {
               <p className="detail">{result.calculation.leftoverPlacements} leftover placements</p>
               <p className="explanation">
                 With {result.calculation.maxPlacements} maximum placements (30% of {result.calculation.inputs.streamLengthMinutes} min stream time = {(result.calculation.inputs.streamLengthMinutes * 0.3).toFixed(1)} min of ads) 
-                and {result.calculation.actualFrequency} placements per brand, you can fit {result.calculation.availableBrandSlots} brands. 
-                Maximum revenue: {result.calculation.availableBrandSlots} × {formatCurrency(result.calculation.costPerActivation)} = {formatCurrency(result.calculation.totalInventoryValue)}.
+                and {result.calculation.minAdFrequency} placements per brand for full reach, you can fit {result.calculation.availableBrandSlots} brands. 
+                Maximum revenue: {result.calculation.availableBrandSlots} × {formatCurrency(result.calculation.costPerPlacement)} = {formatCurrency(result.calculation.totalInventoryValue)}.
               </p>
             </div>
             
@@ -278,21 +277,19 @@ function Dashboard() {
             </div>
 
             <div className="result-card">
-              <h3>Effective Unique Viewers</h3>
-              <p className="value">{result.calculation.effectiveUniqueViewers.toLocaleString()}</p>
-              <p className="detail">Estimated unique audience</p>
+              <h3>Concurrent Viewers</h3>
+              <p className="value">{result.calculation.concurrentViewers.toLocaleString()}</p>
+              <p className="detail">Average live audience size</p>
               <p className="explanation">
-                With a {result.calculation.inputs.streamLengthMinutes}-minute stream and 
-                {result.calculation.inputs.avgViewTimeMinutes}-minute average view time, 
-                viewers cycle through {result.calculation.uniqueWatchSessions.toFixed(1)} times. 
-                This means {result.calculation.inputs.totalViews.toLocaleString()} total views 
-                represents approximately {result.calculation.effectiveUniqueViewers.toLocaleString()} unique people.
+                With {result.calculation.inputs.totalViews.toLocaleString()} total views and an average view time of {result.calculation.inputs.avgViewTimeMinutes} minutes 
+                across a {result.calculation.inputs.streamLengthMinutes}-minute stream, the average concurrent audience is {result.calculation.concurrentViewers.toLocaleString()} viewers. 
+                Calculation: {result.calculation.inputs.totalViews.toLocaleString()} × ({result.calculation.inputs.avgViewTimeMinutes} ÷ {result.calculation.inputs.streamLengthMinutes}) = {result.calculation.concurrentViewers.toLocaleString()}.
               </p>
             </div>
 
             <div className="result-card">
               <h3>Placement Details</h3>
-              <p className="value">{result.calculation.actualFrequency} placements per brand</p>
+              <p className="value">{result.calculation.minAdFrequency} placements per brand</p>
               <p className="detail">{result.calculation.maxPlacements} total slots available</p>
               <p className="explanation">
                 {result.calculation.isPartialReach ? (

@@ -7,7 +7,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 function MultiBrandSplit() {
   const [industries, setIndustries] = useState([]);
-  const [mode, setMode] = useState('single'); // 'single' or 'campaign'
+  const [mode, setMode] = useState('single');
   const [showInfo, setShowInfo] = useState(false);
   
   // Single stream state
@@ -36,7 +36,7 @@ function MultiBrandSplit() {
       .catch(error => console.error('Error fetching industries:', error));
   }, []);
 
-   const calculateSlots = async () => {
+  const calculateSlots = async () => {
     try {
       const calculatedFrequency = Math.ceil(parseInt(streamLength) / parseInt(avgViewTime));
       const calculatedMaxPlacements = Math.floor((parseInt(streamLength) * 0.3) / 0.5);
@@ -52,7 +52,8 @@ function MultiBrandSplit() {
         exchangeRate: currency === 'USD' ? 1 / exchangeRates.USD : 1
       });
 
-      setSlotValue(response.data.calculation.costPerActivation);
+      // FIXED: Use costPerPlacement instead of costPerActivation
+      setSlotValue(response.data.calculation.costPerPlacement);
       setAvailableSlots(slots);
       setMinFrequency(calculatedFrequency);
       setMaxPlacements(calculatedMaxPlacements);
@@ -176,10 +177,10 @@ function MultiBrandSplit() {
                 <div className="slot-card">
                   <h3>Slot Value</h3>
                   <p className="big-value">{formatCurrency(slotValue)}</p>
-                  <p className="detail">Per brand</p>
+                  <p className="detail">Per brand slot</p>
                   <p className="explainer">
-                    Each brand pays {formatCurrency(slotValue)} for {minFrequency} placements 
-                    (minimum frequency to reach full audience)
+                    Each brand pays {formatCurrency(slotValue)} per placement slot. 
+                    For full audience reach, brands need {minFrequency} placements.
                   </p>
                 </div>
 
@@ -197,7 +198,7 @@ function MultiBrandSplit() {
                   <p className="big-value">{formatCurrency(availableSlots * slotValue)}</p>
                   <p className="detail">All {availableSlots} slots sold</p>
                   <p className="explainer">
-                    vs. {formatCurrency(slotValue)} from single brand = {availableSlots}x increase!
+                    {availableSlots} brands × {formatCurrency(slotValue)} = {formatCurrency(availableSlots * slotValue)} total inventory value!
                   </p>
                 </div>
               </div>
