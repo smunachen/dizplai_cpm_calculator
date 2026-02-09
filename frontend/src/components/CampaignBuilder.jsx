@@ -141,13 +141,21 @@ function CampaignBuilder() {
   };
 
   const getCalculatedFrequency = (stream) => {
-  if (!stream.stream_length_minutes || !stream.avg_view_time_minutes) return 0;
-  return Math.ceil(stream.stream_length_minutes / stream.avg_view_time_minutes);
-};
+    if (!stream.stream_length_minutes || !stream.avg_view_time_minutes) return 0;
+    return Math.ceil(stream.stream_length_minutes / stream.avg_view_time_minutes);
+  };
 
   const getMaxPlacements = (stream) => {
-    if (!stream.avg_view_time_minutes) return 0;
-    return Math.floor((stream.avg_view_time_minutes * 0.3) / 0.5);
+    if (!stream.stream_length_minutes) return 0;
+    // FIXED: Changed from 0.5 (30 seconds) to 2 (2 minutes)
+    return Math.floor((stream.stream_length_minutes * 0.3) / 2);
+  };
+
+  const getAvailableBrandSlots = (stream) => {
+    const maxPlacements = getMaxPlacements(stream);
+    const frequency = getCalculatedFrequency(stream);
+    if (!frequency) return 0;
+    return Math.floor(maxPlacements / frequency);
   };
 
   return (
@@ -259,9 +267,9 @@ function CampaignBuilder() {
                   </div>
 
                   <div className="input-group">
-                    <label>Maximum Placements (30% Rule)</label>
+                    <label>Available Brand Slots (30% Rule)</label>
                     <div className="calculated-value-small">
-                      Slots for up to {getMaxPlacements(stream)} brands
+                      Up to {getAvailableBrandSlots(stream)} brands can fit
                     </div>
                   </div>
                 </div>
@@ -280,7 +288,8 @@ function CampaignBuilder() {
                     </div>
                     <div className="result-details">
                       Premium CPM: {formatCurrency(stream.result.calculation.premiumCPM)} | 
-                      Placements: {stream.result.calculation.selectedFrequency}
+                      Cost Per Placement: {formatCurrency(stream.result.calculation.costPerPlacement)} | 
+                      Brand Slots: {stream.result.calculation.availableBrandSlots}
                     </div>
                   </div>
                 )}
@@ -305,7 +314,7 @@ function CampaignBuilder() {
                   <th>Stream Type</th>
                   <th>Content</th>
                   <th>Views</th>
-                  <th>Placements</th>
+                  <th>Brand Slots</th>
                   <th>Value</th>
                 </tr>
               </thead>
@@ -315,7 +324,7 @@ function CampaignBuilder() {
                     <td>{stream.stream_type || `Stream ${index + 1}`}</td>
                     <td>{industries.find(i => i.id === stream.industry_id)?.name}</td>
                     <td>{stream.total_views.toLocaleString()}</td>
-                    <td>{stream.result.calculation.selectedFrequency}</td>
+                    <td>{stream.result.calculation.availableBrandSlots}</td>
                     <td className="value-cell">
                       {formatCurrency(stream.result.calculation.totalInventoryValue)}
                     </td>
