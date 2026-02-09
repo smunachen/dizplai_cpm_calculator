@@ -127,17 +127,17 @@ function MethodologyModal({ isOpen, onClose }) {
           
           <div className="math-explanation">
             <div className="math-step">
-              <strong>Step 1:</strong> Calculate compound effect
+              <strong>Step 1:</strong> <span style={{color: '#d4d6dd'}}>Calculate compound effect</span>
               <code>1.8 × 2.5 × 1.3 × 1.4 = 8.19x</code>
             </div>
             
             <div className="math-step">
-              <strong>Step 2:</strong> Apply geometric mean
+              <strong>Step 2:</strong> <span style={{color: '#d4d6dd'}}>Apply geometric mean</span>
               <code>Geometric Mean = (8.19)^(1/4) = 1.69</code>
             </div>
             
             <div className="math-step">
-              <strong>Step 3:</strong> Scale to realistic premium
+              <strong>Step 3:</strong> <span style={{color: '#d4d6dd'}}>Scale to realistic premium</span>
               <code>Adjusted Multiplier = 1 + (1.69 - 1) × 1.5 = 2.54x</code>
             </div>
           </div>
@@ -151,17 +151,17 @@ function MethodologyModal({ isOpen, onClose }) {
           
           <div className="math-explanation">
             <div className="math-step">
-              <strong>Concurrent Viewers:</strong> Average live audience at any moment
+              <strong>Concurrent Viewers:</strong> <span style={{color: '#d4d6dd'}}>Average live audience at any moment</span>
               <code>Total Views × (Avg View Time ÷ Stream Length)</code>
             </div>
             
             <div className="math-step">
-              <strong>Viewer-Minutes Per Placement:</strong> Total attention captured
+              <strong>Viewer-Minutes Per Placement:</strong> <span style={{color: '#d4d6dd'}}>Total attention captured</span>
               <code>Concurrent Viewers × Placement Duration (2 minutes)</code>
             </div>
             
             <div className="math-step">
-              <strong>Cost Per Placement:</strong> CPM applied to viewer-minutes
+              <strong>Cost Per Placement:</strong> <span style={{color: '#d4d6dd'}}>CPM applied to viewer-minutes</span>
               <code>(Premium CPM ÷ 1,000) × Viewer-Minutes</code>
             </div>
           </div>
