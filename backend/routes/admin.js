@@ -74,21 +74,46 @@ router.post('/remove-industry', async (req, res) => {
   try {
     await client.query('BEGIN');
 
-    const result = await client.query(
-      'DELETE FROM industries WHERE slug = $1 RETURNING name',
+    // First, get the industry ID
+    const industryResult = await client.query(
+      'SELECT id, name FROM industries WHERE slug = $1',
       [slug]
+    );
+
+    if (industryResult.rowCount === 0) {
+      await client.query('ROLLBACK');
+      return res.json({ success: false, message: `Industry '${slug}' not found` });
+    }
+
+    const industryId = industryResult.rows[0].id;
+    const industryName = industryResult.rows[0].name;
+
+    // Delete all calculations that reference this industry
+    const calcDeleteResult = await client.query(
+      'DELETE FROM calculations WHERE industry_id = $1',
+      [industryId]
+    );
+
+    // Delete all campaign_streams that reference this industry
+    const streamDeleteResult = await client.query(
+      'DELETE FROM campaign_streams WHERE industry_id = $1',
+      [industryId]
+    );
+
+    // Now delete the industry
+    await client.query(
+      'DELETE FROM industries WHERE id = $1',
+      [industryId]
     );
 
     await client.query('COMMIT');
 
-    if (result.rowCount === 0) {
-      return res.json({ success: false, message: `Industry '${slug}' not found` });
-    }
-
     res.json({ 
       success: true, 
-      message: `Successfully removed industry: ${result.rows[0].name}`,
-      removed: result.rows[0].name
+      message: `Successfully removed industry: ${industryName}`,
+      removed: industryName,
+      calculationsDeleted: calcDeleteResult.rowCount,
+      streamsDeleted: streamDeleteResult.rowCount
     });
 
   } catch (error) {
