@@ -73,10 +73,6 @@ function MethodologyModal({ isOpen, onClose }) {
               <div><strong>Gaming:</strong> <span className="cpm-value">£10 CPM</span></div>
               <span className="source">Lenos, OutlierKit 2025-2026</span>
             </div>
-            <div className="benchmark-item">
-              <div><strong>Music & Podcasts:</strong> <span className="cpm-value">£8 CPM</span></div>
-              <span className="source">Lenos 2025</span>
-            </div>
           </div>
 
           <p className="note">These represent typical rates for standard YouTube pre-roll ads (skippable, separate from content). Our calculator uses the middle value (average CPM) as the base rate.</p>
@@ -149,7 +145,31 @@ function MethodologyModal({ isOpen, onClose }) {
           <p className="note"><strong>Why geometric mean?</strong> Straight multiplication assumes factors are completely independent. In reality, they overlap (live content is inherently high-attention). Geometric mean provides a more conservative, defensible premium that accounts for factor interdependence.</p>
         </div>
 
-<div className="methodology-section">
+        <div className="methodology-section">
+          <h3>⏱️ Viewer-Minutes Pricing Model</h3>
+          <p>CPM is applied to <strong>viewer-minutes of attention</strong>, not just viewer count. This reflects the true value of brand exposure.</p>
+          
+          <div className="math-explanation">
+            <div className="math-step">
+              <strong>Concurrent Viewers:</strong> Average live audience at any moment
+              <code>Total Views × (Avg View Time ÷ Stream Length)</code>
+            </div>
+            
+            <div className="math-step">
+              <strong>Viewer-Minutes Per Placement:</strong> Total attention captured
+              <code>Concurrent Viewers × Placement Duration (2 minutes)</code>
+            </div>
+            
+            <div className="math-step">
+              <strong>Cost Per Placement:</strong> CPM applied to viewer-minutes
+              <code>(Premium CPM ÷ 1,000) × Viewer-Minutes</code>
+            </div>
+          </div>
+          
+          <p className="note"><strong>Why viewer-minutes?</strong> A 2-minute placement reaching 15,000 viewers generates 30,000 viewer-minutes of branded attention. Pricing only on viewer count ignores exposure duration. This model aligns with how sponsors actually value persistent branding (overlays, lower-thirds, score bugs).</p>
+        </div>
+
+        <div className="methodology-section">
           <h3>💡 Example Calculation</h3>
           <div className="example-box">
             <p><strong>Scenario:</strong> Sports live stream, 180 min, 15 min avg view time, 50,000 total views</p>
@@ -157,13 +177,14 @@ function MethodologyModal({ isOpen, onClose }) {
               <li>Base CPM: £25 (Sports industry standard)</li>
               <li>Premium Multiplier: 2.04x (geometric mean adjusted)</li>
               <li><strong>Premium CPM: £51.00</strong></li>
-              <li>Effective Unique Viewers: 50,000 ÷ (180 ÷ 15) = <strong>4,167 unique people</strong></li>
-              <li>Cost per placement: (£51.00 ÷ 1,000) × 4,167 = <strong>£212.52</strong></li>
+              <li>Concurrent Viewers: 50,000 × (15 ÷ 180) = <strong>4,167 viewers</strong></li>
+              <li>Viewer-Minutes Per Placement: 4,167 × 2 = <strong>8,334 viewer-minutes</strong></li>
+              <li>Cost per placement: (£51.00 ÷ 1,000) × 8,334 = <strong>£425</strong></li>
               <li>Minimum frequency: 180 ÷ 15 = <strong>12 placements</strong> (to reach everyone)</li>
-              <li>Cost per activation: £212.52 × 12 = <strong>£2,550</strong></li>
-              <li>Maximum placements: (180 × 0.3) ÷ 0.5 = <strong>108 slots</strong></li>
-              <li>Available brand slots: 108 ÷ 12 = <strong>9 brands</strong></li>
-              <li><strong>Total Inventory Value: 9 × £2,550 = £22,950</strong></li>
+              <li>Cost per activation: £425 × 12 = <strong>£5,100</strong></li>
+              <li>Maximum placements: (180 × 0.3) ÷ 2 = <strong>27 slots</strong></li>
+              <li>Available brand slots: 27 ÷ 12 = <strong>2 brands</strong></li>
+              <li><strong>Total Inventory Value: 2 × £425 = £850</strong></li>
             </ul>
           </div>
         </div>
