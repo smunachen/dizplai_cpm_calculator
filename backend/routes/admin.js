@@ -94,12 +94,6 @@ router.post('/remove-industry', async (req, res) => {
       [industryId]
     );
 
-    // Delete all campaign_streams that reference this industry
-    const streamDeleteResult = await client.query(
-      'DELETE FROM campaign_streams WHERE industry_id = $1',
-      [industryId]
-    );
-
     // Now delete the industry
     await client.query(
       'DELETE FROM industries WHERE id = $1',
@@ -112,8 +106,7 @@ router.post('/remove-industry', async (req, res) => {
       success: true, 
       message: `Successfully removed industry: ${industryName}`,
       removed: industryName,
-      calculationsDeleted: calcDeleteResult.rowCount,
-      streamsDeleted: streamDeleteResult.rowCount
+      calculationsDeleted: calcDeleteResult.rowCount
     });
 
   } catch (error) {
