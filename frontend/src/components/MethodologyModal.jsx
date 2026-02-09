@@ -149,16 +149,21 @@ function MethodologyModal({ isOpen, onClose }) {
           <p className="note"><strong>Why geometric mean?</strong> Straight multiplication assumes factors are completely independent. In reality, they overlap (live content is inherently high-attention). Geometric mean provides a more conservative, defensible premium that accounts for factor interdependence.</p>
         </div>
 
-        <div className="methodology-section">
+<div className="methodology-section">
           <h3>💡 Example Calculation</h3>
           <div className="example-box">
-            <p><strong>Scenario:</strong> Sports live stream, 180 min, 50,000 views</p>
+            <p><strong>Scenario:</strong> Sports live stream, 180 min, 15 min avg view time, 50,000 total views</p>
             <ul>
               <li>Base CPM: £25 (Sports industry standard)</li>
-              <li>Premium Multiplier: 2.54x</li>
-              <li><strong>Premium CPM: £63.50</strong></li>
-              <li>Cost per 30-second placement: (£63.50 ÷ 1,000) × 50,000 = <strong>£3,175</strong></li>
-              <li>4 placements across stream = <strong>£12,700 total value</strong></li>
+              <li>Premium Multiplier: 2.04x (geometric mean adjusted)</li>
+              <li><strong>Premium CPM: £51.00</strong></li>
+              <li>Effective Unique Viewers: 50,000 ÷ (180 ÷ 15) = <strong>4,167 unique people</strong></li>
+              <li>Cost per placement: (£51.00 ÷ 1,000) × 4,167 = <strong>£212.52</strong></li>
+              <li>Minimum frequency: 180 ÷ 15 = <strong>12 placements</strong> (to reach everyone)</li>
+              <li>Cost per activation: £212.52 × 12 = <strong>£2,550</strong></li>
+              <li>Maximum placements: (180 × 0.3) ÷ 0.5 = <strong>108 slots</strong></li>
+              <li>Available brand slots: 108 ÷ 12 = <strong>9 brands</strong></li>
+              <li><strong>Total Inventory Value: 9 × £2,550 = £22,950</strong></li>
             </ul>
           </div>
         </div>
