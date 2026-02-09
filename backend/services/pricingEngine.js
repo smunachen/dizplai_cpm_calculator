@@ -87,17 +87,31 @@ class PricingEngine {
     // Step 9: Determine selected frequency (for backwards compatibility)
     const selectedFrequency = userSelectedFrequency || minAdFrequency;
     
-    // Validate selected frequency
-    if (selectedFrequency > maxPlacements) {
-      throw new Error(
-        `Selected frequency (${selectedFrequency}) exceeds maximum placements (${maxPlacements}). ` +
-        `Reduce frequency or increase average view time.`
-      );
-    }
+    // Handle partial reach scenario
+let actualFrequency = selectedFrequency;
+let audienceReachPercentage = 100;
+let isPartialReach = false;
+
+if (selectedFrequency > maxPlacements) {
+  // Allow partial reach instead of throwing error
+  actualFrequency = maxPlacements;
+  audienceReachPercentage = (maxPlacements / selectedFrequency) * 100;
+  isPartialReach = true;
+}
     
     // Step 10: Calculate total inventory value (MAXIMUM REVENUE POTENTIAL)
-    // Total value if ALL available brand slots are sold
-    const totalInventoryValue = costPerActivation * availableBrandSlots;
+// Adjust for partial reach if applicable
+const costPerActivationFull = costPerPlacement * minAdFrequency;
+const costPerActivationAdjusted = isPartialReach 
+  ? costPerPlacement * actualFrequency 
+  : costPerActivationFull;
+
+// Calculate available slots based on actual frequency
+const actualAvailableBrandSlots = Math.floor(maxPlacements / actualFrequency);
+const actualLeftoverPlacements = maxPlacements % actualFrequency;
+
+// Total value if ALL available brand slots are sold
+const totalInventoryValue = costPerActivationAdjusted * actualAvailableBrandSlots;
 
     // Return all calculated metrics
     return {
@@ -125,17 +139,23 @@ class PricingEngine {
       // Placement constraints
       maxPlacements,
       selectedFrequency,
-      availableBrandSlots, // NEW: How many brands can fit
-      leftoverPlacements, // NEW: Unused placement slots
+      actualFrequency, // NEW: Actual placements used (may be less than selected)
+      availableBrandSlots: actualAvailableBrandSlots, // UPDATED: Uses actual frequency
+      leftoverPlacements: actualLeftoverPlacements, // UPDATED: Uses actual frequency
+      
+      // Partial reach information
+      isPartialReach, // NEW: Warning flag
+      audienceReachPercentage: parseFloat(audienceReachPercentage.toFixed(1)), // NEW: % of audience reached
       
       // Pricing outputs (NEW LOGIC)
       costPerPlacement: parseFloat(costPerPlacement.toFixed(2)), // Cost for ONE 30-sec placement
-      costPerActivation: parseFloat(costPerActivation.toFixed(2)), // Cost for ONE BRAND SLOT
-      totalInventoryValue: parseFloat(totalInventoryValue.toFixed(2)), // Single brand value
+      costPerActivation: parseFloat(costPerActivationAdjusted.toFixed(2)), // UPDATED: Adjusted for partial reach
+      costPerActivationFull: parseFloat(costPerActivationFull.toFixed(2)), // NEW: Full 100% reach cost
+      totalInventoryValue: parseFloat(totalInventoryValue.toFixed(2)), // Uses adjusted activation cost
       
       // Additional useful metrics
-      adTimeMinutes: selectedFrequency * 0.5,
-      adTimePercentage: parseFloat(((selectedFrequency * 0.5 / avgViewTimeMinutes) * 100).toFixed(1)),
+      adTimeMinutes: actualFrequency * 0.5, // UPDATED: Uses actual frequency
+      adTimePercentage: parseFloat(((actualFrequency * 0.5 / avgViewTimeMinutes) * 100).toFixed(1)), // UPDATED
       costPerUniqueViewer: parseFloat((totalInventoryValue / effectiveUniqueViewers).toFixed(2)),
     };
   }
