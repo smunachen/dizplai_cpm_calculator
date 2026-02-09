@@ -61,4 +61,43 @@ router.post('/add-industries', async (req, res) => {
   }
 });
 
+// Remove a single industry by slug
+router.post('/remove-industry', async (req, res) => {
+  const { password, slug } = req.body;
+
+  if (password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN');
+
+    const result = await client.query(
+      'DELETE FROM industries WHERE slug = $1 RETURNING name',
+      [slug]
+    );
+
+    await client.query('COMMIT');
+
+    if (result.rowCount === 0) {
+      return res.json({ success: false, message: `Industry '${slug}' not found` });
+    }
+
+    res.json({ 
+      success: true, 
+      message: `Successfully removed industry: ${result.rows[0].name}`,
+      removed: result.rows[0].name
+    });
+
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Error removing industry:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    client.release();
+  }
+});
+
 module.exports = router;
