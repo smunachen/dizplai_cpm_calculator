@@ -51,67 +51,55 @@ class PricingEngine {
     // Step 2: Calculate premium CPM using adjusted multiplier
     // Instead of compounding (1.8 × 2.5 × 1.3 × 1.4 = 8.19x)
     // We use geometric mean to get a more balanced premium
-    // Formula: (product of all multipliers) ^ (1/number of multipliers)
     const geometricMean = Math.pow(totalMultiplier, 1 / multipliers.length);
-    const adjustedMultiplier = 1 + (geometricMean - 1) * 1.5; // Scale the premium
+    const adjustedMultiplier = 1 + (geometricMean - 1) * 1.5;
     const premiumCPM = baseCPM * adjustedMultiplier;
     
-    // Step 3: Calculate unique watch sessions
-    // How many times does the average viewer "cycle" through the stream?
+    // Step 3: Calculate CONCURRENT VIEWERS (NEW FORMULA)
+    // This represents the average live audience size at any moment
+    // Formula: Total Views × (Avg View Time ÷ Stream Length)
+    const concurrentViewers = Math.round(totalViews * (avgViewTimeMinutes / streamLengthMinutes));
+    
+    // Step 4: Determine minimum ad frequency
+    // How many placements needed for one brand to reach full audience
     const uniqueWatchSessions = streamLengthMinutes / avgViewTimeMinutes;
-    
-    // Step 4: Calculate effective unique viewers
-    // Estimate true unique audience accounting for multiple sessions
-    const effectiveUniqueViewers = Math.round(totalViews / uniqueWatchSessions);
-    
-    // Step 5: Determine minimum ad frequency
-    // Minimum placements needed to reach each viewer at least once
     const minAdFrequency = Math.ceil(uniqueWatchSessions);
     
-    // Step 6: Calculate maximum possible placements (30% rule based on STREAM)
-    // Ads cannot exceed 30% of total stream time
+    // Step 5: Calculate maximum possible placements (30% rule based on STREAM)
     const maxAdTimeMinutes = streamLengthMinutes * 0.30;
-    const maxPlacements = Math.floor(maxAdTimeMinutes / 0.5); // 30 seconds = 0.5 minutes per ad
+    const maxPlacements = Math.floor(maxAdTimeMinutes / 0.5); // 30 seconds per ad
     
-    // Step 7: Calculate available brand slots
-    // How many brands can we fit if each needs minAdFrequency placements?
+    // Step 6: Calculate available brand slots
     const availableBrandSlots = Math.floor(maxPlacements / minAdFrequency);
     const leftoverPlacements = maxPlacements % minAdFrequency;
     
-    // Step 8: Calculate cost per activation (one slot = all placements for one brand)
-    // This is the cost for ONE BRAND to reach the UNIQUE audience
-    // CPM = cost per 1000 impressions, so divide by 1000 and multiply by EFFECTIVE UNIQUE VIEWERS
-    const costPerPlacement = (premiumCPM / 1000) * effectiveUniqueViewers;
-    const costPerActivation = costPerPlacement * minAdFrequency; // One brand buys ONE activation
+    // Step 7: Calculate cost per SINGLE placement (SIMPLIFIED)
+    // This is what ONE brand pays for ONE 30-second slot
+    // CPM is per 1000 impressions, so divide by 1000 and multiply by concurrent viewers
+    const costPerPlacement = (premiumCPM / 1000) * concurrentViewers;
+    
+    // Step 8: Calculate cost per activation (one brand buying full frequency)
+    // This is for reference only - inventory is sold per placement
+    const costPerActivation = costPerPlacement * minAdFrequency;
     
     // Step 9: Determine selected frequency (for backwards compatibility)
     const selectedFrequency = userSelectedFrequency || minAdFrequency;
     
     // Handle partial reach scenario
-let actualFrequency = selectedFrequency;
-let audienceReachPercentage = 100;
-let isPartialReach = false;
+    let actualFrequency = selectedFrequency;
+    let audienceReachPercentage = 100;
+    let isPartialReach = false;
 
-if (selectedFrequency > maxPlacements) {
-  // Allow partial reach instead of throwing error
-  actualFrequency = maxPlacements;
-  audienceReachPercentage = (maxPlacements / selectedFrequency) * 100;
-  isPartialReach = true;
-}
+    if (selectedFrequency > maxPlacements) {
+      actualFrequency = maxPlacements;
+      audienceReachPercentage = (maxPlacements / selectedFrequency) * 100;
+      isPartialReach = true;
+    }
     
-    // Step 10: Calculate total inventory value (MAXIMUM REVENUE POTENTIAL)
-// Adjust for partial reach if applicable
-const costPerActivationFull = costPerPlacement * minAdFrequency;
-const costPerActivationAdjusted = isPartialReach 
-  ? costPerPlacement * actualFrequency 
-  : costPerActivationFull;
-
-// Calculate available slots based on actual frequency
-const actualAvailableBrandSlots = Math.floor(maxPlacements / actualFrequency);
-const actualLeftoverPlacements = maxPlacements % actualFrequency;
-
-// Total value if ALL available brand slots are sold
-const totalInventoryValue = costPerActivationAdjusted * actualAvailableBrandSlots;
+    // Step 10: Calculate TOTAL INVENTORY VALUE (FIXED)
+    // Total value = Cost Per Placement × Total Available Brand Slots
+    // This is the MAXIMUM REVENUE if all slots are sold
+    const totalInventoryValue = costPerPlacement * availableBrandSlots;
 
     // Return all calculated metrics
     return {
@@ -131,32 +119,33 @@ const totalInventoryValue = costPerActivationAdjusted * actualAvailableBrandSlot
       geometricMean: parseFloat(geometricMean.toFixed(2)),
       premiumCPM: parseFloat(premiumCPM.toFixed(2)),
       
-      // Frequency calculations
+      // Audience calculations (UPDATED)
       uniqueWatchSessions: parseFloat(uniqueWatchSessions.toFixed(2)),
-      effectiveUniqueViewers,
+      concurrentViewers, // NEW: Replaces effectiveUniqueViewers
+      effectiveUniqueViewers: concurrentViewers, // Keep for backwards compatibility
       minAdFrequency,
       
       // Placement constraints
       maxPlacements,
       selectedFrequency,
-      actualFrequency, // NEW: Actual placements used (may be less than selected)
-      availableBrandSlots: actualAvailableBrandSlots, // UPDATED: Uses actual frequency
-      leftoverPlacements: actualLeftoverPlacements, // UPDATED: Uses actual frequency
+      actualFrequency,
+      availableBrandSlots,
+      leftoverPlacements,
       
       // Partial reach information
-      isPartialReach, // NEW: Warning flag
-      audienceReachPercentage: parseFloat(audienceReachPercentage.toFixed(1)), // NEW: % of audience reached
+      isPartialReach,
+      audienceReachPercentage: parseFloat(audienceReachPercentage.toFixed(1)),
       
-      // Pricing outputs (NEW LOGIC)
-      costPerPlacement: parseFloat(costPerPlacement.toFixed(2)), // Cost for ONE 30-sec placement
-      costPerActivation: parseFloat(costPerActivationAdjusted.toFixed(2)), // UPDATED: Adjusted for partial reach
-      costPerActivationFull: parseFloat(costPerActivationFull.toFixed(2)), // NEW: Full 100% reach cost
-      totalInventoryValue: parseFloat(totalInventoryValue.toFixed(2)), // Uses adjusted activation cost
+      // Pricing outputs (UPDATED)
+      costPerPlacement: parseFloat(costPerPlacement.toFixed(2)), // Single slot value
+      costPerActivation: parseFloat(costPerActivation.toFixed(2)), // Full frequency cost
+      costPerActivationFull: parseFloat(costPerActivation.toFixed(2)), // Same as above
+      totalInventoryValue: parseFloat(totalInventoryValue.toFixed(2)), // FIXED: costPerPlacement × slots
       
       // Additional useful metrics
-      adTimeMinutes: actualFrequency * 0.5, // UPDATED: Uses actual frequency
-      adTimePercentage: parseFloat(((actualFrequency * 0.5 / avgViewTimeMinutes) * 100).toFixed(1)), // UPDATED
-      costPerUniqueViewer: parseFloat((totalInventoryValue / effectiveUniqueViewers).toFixed(2)),
+      adTimeMinutes: actualFrequency * 0.5,
+      adTimePercentage: parseFloat(((actualFrequency * 0.5 / streamLengthMinutes) * 100).toFixed(1)),
+      costPerUniqueViewer: parseFloat((costPerPlacement / concurrentViewers).toFixed(2)),
     };
   }
 
@@ -180,7 +169,7 @@ const totalInventoryValue = costPerActivationAdjusted * actualAvailableBrandSlot
     if (totalPlacementsRequested > maxPlacements) {
       throw new Error(
         `Total placements requested (${totalPlacementsRequested}) exceeds maximum (${maxPlacements}). ` +
-        `Maximum ad time is 30% of average view time.`
+        `Maximum ad time is 30% of stream time.`
       );
     }
     
