@@ -63,7 +63,7 @@ function Dashboard() {
     return `${symbol}${convertedAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
- return (
+  return (
     <div className="dashboard-container">
       <div className="dashboard-content">
         <h1>Single Stream Calculator</h1>
@@ -135,12 +135,12 @@ function Dashboard() {
               <div className="input-group">
                 <label>Maximum Ad Placements (30% Rule)</label>
                 <div className="calculated-value">
-                  There are slots available for up to {Math.floor(Math.floor((avgViewTime * 0.3) / 0.5) / Math.ceil(streamLength / avgViewTime))} brands
+                  There are slots available for up to {Math.floor(Math.floor((streamLength * 0.3) / 0.5) / Math.ceil(streamLength / avgViewTime))} brands
                 </div>
                 <p className="input-help">
-                  With {avgViewTime} minutes average view time, viewers can see up to {Math.floor((avgViewTime * 0.3) / 0.5)} ads 
-                  (30% of viewing time = {(avgViewTime * 0.3).toFixed(1)} minutes = {Math.floor((avgViewTime * 0.3) / 0.5)} × 30-second slots). 
-                  Each brand needs {Math.ceil(streamLength / avgViewTime)} placements, so {Math.floor(Math.floor((avgViewTime * 0.3) / 0.5) / Math.ceil(streamLength / avgViewTime))} brands can fit.
+                  With {streamLength} minutes stream length, you can have up to {Math.floor((streamLength * 0.3) / 0.5)} ads 
+                  (30% of stream time = {(streamLength * 0.3).toFixed(1)} minutes = {Math.floor((streamLength * 0.3) / 0.5)} × 30-second slots). 
+                  Each brand needs {Math.ceil(streamLength / avgViewTime)} placements, so {Math.floor(Math.floor((streamLength * 0.3) / 0.5) / Math.ceil(streamLength / avgViewTime))} brands can fit.
                 </p>
               </div>
             </>
@@ -231,7 +231,7 @@ function Dashboard() {
               <p className="value">{result.calculation.availableBrandSlots} brands</p>
               <p className="detail">{result.calculation.leftoverPlacements} leftover placements</p>
               <p className="explanation">
-                With {result.calculation.maxPlacements} maximum placements (30% of {result.calculation.inputs.avgViewTimeMinutes} min average view time) 
+                With {result.calculation.maxPlacements} maximum placements (30% of {result.calculation.inputs.streamLengthMinutes} min stream time = {(result.calculation.inputs.streamLengthMinutes * 0.3).toFixed(1)} min of ads) 
                 and {result.calculation.actualFrequency} placements per brand, you can fit {result.calculation.availableBrandSlots} brands. 
                 Maximum revenue: {result.calculation.availableBrandSlots} × {formatCurrency(result.calculation.costPerActivation)} = {formatCurrency(result.calculation.totalInventoryValue)}.
               </p>
@@ -278,7 +278,7 @@ function Dashboard() {
                 ) : (
                   <>
                     Each brand must appear {result.calculation.minAdFrequency} times (minimum frequency) to reach everyone. 
-                    With {result.calculation.maxPlacements} total placement slots available (30% of {result.calculation.inputs.avgViewTimeMinutes} min average view time = {(result.calculation.inputs.avgViewTimeMinutes * 0.3).toFixed(1)} min of ads), 
+                    With {result.calculation.maxPlacements} total placement slots available (30% of {result.calculation.inputs.streamLengthMinutes} min stream time = {(result.calculation.inputs.streamLengthMinutes * 0.3).toFixed(1)} min of ads), 
                     you can accommodate {result.calculation.availableBrandSlots} brands at full reach.
                   </>
                 )}

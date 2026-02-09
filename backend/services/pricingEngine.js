@@ -68,9 +68,9 @@ class PricingEngine {
     // Minimum placements needed to reach each viewer at least once
     const minAdFrequency = Math.ceil(uniqueWatchSessions);
     
-    // Step 6: Calculate maximum possible placements (30% rule based on VIEWER experience)
-    // Ads cannot exceed 30% of average view time (not stream length)
-    const maxAdTimeMinutes = avgViewTimeMinutes * 0.30;
+    // Step 6: Calculate maximum possible placements (30% rule based on STREAM)
+    // Ads cannot exceed 30% of total stream time
+    const maxAdTimeMinutes = streamLengthMinutes * 0.30;
     const maxPlacements = Math.floor(maxAdTimeMinutes / 0.5); // 30 seconds = 0.5 minutes per ad
     
     // Step 7: Calculate available brand slots
