@@ -56,8 +56,8 @@ function Dashboard() {
   return (
     <div className="dashboard">
       <header className="header">
-        <h1>Dizplai CPM Calculator</h1>
-        <p>Live Stream Sponsorship Placement Value Calculator</p>
+        <h1>Dizplai Inventory Value Calculator</h1>
+        <p>Live Stream Sponsorship Value</p>
       </header>
 
       <div className="calculator-container">
@@ -140,7 +140,7 @@ function Dashboard() {
             <h2>Sponsorship Value</h2>
             
             <div className="result-card highlight">
-              <h3>Total Inventory Value (Single Brand)</h3>
+              <h3>Total Inventory Value (All Inventory Sold)</h3>
               <p className="value">{formatCurrency(result.calculation.totalInventoryValue)}</p>
               <p className="explanation">
   This is the MAXIMUM REVENUE if all {result.calculation.availableBrandSlots} brand slots are sold. 
