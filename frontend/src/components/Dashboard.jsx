@@ -135,12 +135,12 @@ function Dashboard() {
               <div className="input-group">
                 <label>Maximum Ad Placements (30% Rule)</label>
                 <div className="calculated-value">
-                  There are slots available for up to {Math.floor(Math.floor((streamLength * 0.3) / 0.5) / Math.ceil(streamLength / avgViewTime))} brands
+                  There are slots available for up to {Math.floor(Math.floor((streamLength * 0.3) / 2) / Math.ceil(streamLength / avgViewTime))} brands
                 </div>
                 <p className="input-help">
-                  With {streamLength} minutes stream length, you can have up to {Math.floor((streamLength * 0.3) / 0.5)} ads 
-                  (30% of stream time = {(streamLength * 0.3).toFixed(1)} minutes = {Math.floor((streamLength * 0.3) / 0.5)} × 30-second slots). 
-                  Each brand needs {Math.ceil(streamLength / avgViewTime)} placements, so {Math.floor(Math.floor((streamLength * 0.3) / 0.5) / Math.ceil(streamLength / avgViewTime))} brands can fit.
+                  With {streamLength} minutes stream length, you can have up to {Math.floor((streamLength * 0.3) / 2)} ads 
+                  (30% of stream time = {(streamLength * 0.3).toFixed(1)} minutes = {Math.floor((streamLength * 0.3) / 2)} × 2-minute slots). 
+                  Each brand needs {Math.ceil(streamLength / avgViewTime)} placements, so {Math.floor(Math.floor((streamLength * 0.3) / 2) / Math.ceil(streamLength / avgViewTime))} brands can fit.
                 </p>
               </div>
             </>

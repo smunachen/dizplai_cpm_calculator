@@ -39,7 +39,7 @@ function MultiBrandSplit() {
   const calculateSlots = async () => {
     try {
       const calculatedFrequency = Math.ceil(parseInt(streamLength) / parseInt(avgViewTime));
-      const calculatedMaxPlacements = Math.floor((parseInt(streamLength) * 0.3) / 0.5);
+      const calculatedMaxPlacements = Math.floor((parseInt(streamLength) * 0.3) / 2);
       const slots = Math.floor(calculatedMaxPlacements / calculatedFrequency);
 
       const response = await axios.post(`${API_URL}/api/calculator/calculate`, {
