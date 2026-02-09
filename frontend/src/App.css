@@ -123,12 +123,6 @@ body {
   .main-nav {
     padding: 1rem;
   }
-
-
-@media (max-width: 768px) {
-  .main-nav {
-    padding: 1rem;
-  }
   
   .nav-container {
     flex-direction: column;
