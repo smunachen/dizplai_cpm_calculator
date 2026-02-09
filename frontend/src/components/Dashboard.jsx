@@ -101,15 +101,14 @@ function Dashboard() {
           </div>
 
           <div className="input-group">
-            <label>Minimum Ad Frequency</label>
-            <div className="calculated-value">
-              Each brand must appear {Math.round(streamLength / avgViewTime)} times
-            </div>
-            <p className="input-help">
-              Based on your stream length and average view time, ads must appear {Math.round(streamLength / avgViewTime)} times 
-              to ensure every viewer sees at least one placement.
-            </p>
-          </div>
+ 	   <label>Minimum Ad Frequency</label>
+ 	   <div className="calculated-value">
+  	     Each brand must appear {Math.ceil(streamLength / avgViewTime)} {Math.ceil(streamLength / avgViewTime) === 1 ? 'time' : 'times'}
+  	  </div>
+  	  <p className="input-help">
+ 	     Based on your stream length and average view time, ads must appear {Math.ceil(streamLength / avgViewTime)} {Math.ceil(streamLength / avgViewTime) === 1 ? 'time' : 'times'} to ensure every viewer sees at least one placement.
+  </p>
+</div>
 
           <div className="input-group">
             <label>Maximum Ad Placements (30% Rule)</label>

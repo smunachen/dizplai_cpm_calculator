@@ -48,7 +48,7 @@ function CampaignBuilder() {
     if (!stream) return;
 
     // Calculate frequency automatically
-    const calculatedFrequency = Math.round(stream.stream_length_minutes / stream.avg_view_time_minutes);
+    const calculatedFrequency = Math.ceil(stream.stream_length_minutes / stream.avg_view_time_minutes);
 
     try {
       const response = await axios.post(`${API_URL}/api/calculator/calculate`, {
@@ -141,9 +141,9 @@ function CampaignBuilder() {
   };
 
   const getCalculatedFrequency = (stream) => {
-    if (!stream.stream_length_minutes || !stream.avg_view_time_minutes) return 0;
-    return Math.round(stream.stream_length_minutes / stream.avg_view_time_minutes);
-  };
+  if (!stream.stream_length_minutes || !stream.avg_view_time_minutes) return 0;
+  return Math.ceil(stream.stream_length_minutes / stream.avg_view_time_minutes);
+};
 
   const getMaxPlacements = (stream) => {
     if (!stream.avg_view_time_minutes) return 0;
