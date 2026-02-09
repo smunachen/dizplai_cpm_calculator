@@ -23,9 +23,9 @@ function Dashboard() {
   useEffect(() => {
     axios.get(`${API_URL}/api/benchmarks/industries`)
       .then(response => {
-        // Ensure response.data is an array
-        const industriesData = Array.isArray(response.data) ? response.data : response.data.industries || [];
-        setIndustries(industriesData);
+        // Backend returns {success: true, count: 15, data: [...]}
+        const industriesData = response.data.data || response.data || [];
+        setIndustries(Array.isArray(industriesData) ? industriesData : []);
       })
       .catch(error => {
         console.error('Error fetching industries:', error);
