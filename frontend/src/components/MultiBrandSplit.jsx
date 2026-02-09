@@ -36,10 +36,10 @@ function MultiBrandSplit() {
       .catch(error => console.error('Error fetching industries:', error));
   }, []);
 
-  const calculateSlots = async () => {
+   const calculateSlots = async () => {
     try {
-      const calculatedFrequency = Math.round(parseInt(streamLength) / parseInt(avgViewTime));
-      const calculatedMaxPlacements = Math.floor((parseInt(avgViewTime) * 0.3) / 0.5);
+      const calculatedFrequency = Math.ceil(parseInt(streamLength) / parseInt(avgViewTime));
+      const calculatedMaxPlacements = Math.floor((parseInt(streamLength) * 0.3) / 0.5);
       const slots = Math.floor(calculatedMaxPlacements / calculatedFrequency);
 
       const response = await axios.post(`${API_URL}/api/calculator/calculate`, {
@@ -52,7 +52,7 @@ function MultiBrandSplit() {
         exchangeRate: currency === 'USD' ? 1 / exchangeRates.USD : 1
       });
 
-      setSlotValue(response.data.calculation.totalInventoryValue);
+      setSlotValue(response.data.calculation.costPerActivation);
       setAvailableSlots(slots);
       setMinFrequency(calculatedFrequency);
       setMaxPlacements(calculatedMaxPlacements);
