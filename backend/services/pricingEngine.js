@@ -3,9 +3,6 @@
  * 
  * Calculates the value of sponsorship placements in live-streamed content
  * by applying premium multipliers to industry base CPMs.
- * 
- * PRICING MODEL: CPM is applied to viewer-minutes of attention, not viewer count alone.
- * This accounts for both audience size (concurrent viewers) and exposure duration (placement length).
  */
 
 class PricingEngine {
@@ -66,35 +63,27 @@ class PricingEngine {
     // Formula: Total Views × (Avg View Time ÷ Stream Length)
     const concurrentViewers = Math.round(totalViews * (avgViewTimeMinutes / streamLengthMinutes));
     
-    // Step 4: Calculate VIEWER-MINUTES PER PLACEMENT (NEW)
-    // This is the total attention captured by one placement
-    // Formula: Concurrent Viewers × Placement Duration
-    const viewerMinutesPerPlacement = concurrentViewers * PLACEMENT_DURATION_MINUTES;
-    
-    // Step 5: Determine minimum ad frequency
+    // Step 4: Determine minimum ad frequency
     // How many placements needed for one brand to reach full audience
     const uniqueWatchSessions = streamLengthMinutes / avgViewTimeMinutes;
     const minAdFrequency = Math.ceil(uniqueWatchSessions);
     
-    // Step 6: Calculate maximum possible placements (30% rule based on STREAM)
+    // Step 5: Calculate maximum possible placements (30% rule based on STREAM)
     const maxAdTimeMinutes = streamLengthMinutes * 0.30;
     const maxPlacements = Math.floor(maxAdTimeMinutes / PLACEMENT_DURATION_MINUTES);
     
-    // Step 7: Calculate available brand slots
+    // Step 6: Calculate available brand slots
     const availableBrandSlots = Math.floor(maxPlacements / minAdFrequency);
     const leftoverPlacements = maxPlacements % minAdFrequency;
     
-    // Step 8: Calculate cost per SINGLE placement (VIEWER-MINUTES MODEL)
-    // This is what ONE brand pays for ONE 2-minute slot
-    // CPM is now applied to viewer-minutes of attention, not just viewer count
-    // Formula: (Premium CPM ÷ 1,000) × Viewer-Minutes Per Placement
-    const costPerPlacement = (premiumCPM / 1000) * viewerMinutesPerPlacement;
+    // Step 7: Calculate cost per SINGLE placement
+    // CPM is applied to concurrent viewers (each impression is a 2-minute exposure by definition)
+    const costPerPlacement = (premiumCPM / 1000) * concurrentViewers;
     
-    // Step 9: Calculate cost per activation (one brand buying full frequency)
-    // This is for reference only - inventory is sold per placement
+    // Step 8: Calculate cost per activation (one brand buying full frequency)
     const costPerActivation = costPerPlacement * minAdFrequency;
     
-    // Step 10: Determine selected frequency (for backwards compatibility)
+    // Step 9: Determine selected frequency (for backwards compatibility)
     const selectedFrequency = userSelectedFrequency || minAdFrequency;
     
     // Handle partial reach scenario
@@ -108,13 +97,10 @@ class PricingEngine {
       isPartialReach = true;
     }
     
-    // Step 11: Calculate TOTAL INVENTORY VALUE
-    // Total value = Cost Per Placement × Total Available Brand Slots
-    // This is the MAXIMUM REVENUE if all slots are sold
-    const totalInventoryValue = costPerPlacement * availableBrandSlots;
-
-    // Step 12: Calculate total viewer-minutes (for reference)
-    const totalViewerMinutes = totalViews * avgViewTimeMinutes;
+    // Step 10: Calculate TOTAL INVENTORY VALUE
+    // Total value = Cost Per Activation × Available Brand Slots
+    // This is the MAXIMUM REVENUE if all brand slots are sold
+    const totalInventoryValue = costPerActivation * availableBrandSlots;
 
     // Return all calculated metrics
     return {
@@ -139,8 +125,6 @@ class PricingEngine {
       uniqueWatchSessions: parseFloat(uniqueWatchSessions.toFixed(2)),
       concurrentViewers,
       effectiveUniqueViewers: concurrentViewers, // Keep for backwards compatibility
-      viewerMinutesPerPlacement, // NEW: Total attention per placement
-      totalViewerMinutes, // NEW: Total attention across stream
       minAdFrequency,
       
       // Placement constraints
@@ -155,7 +139,7 @@ class PricingEngine {
       audienceReachPercentage: parseFloat(audienceReachPercentage.toFixed(1)),
       
       // Pricing outputs
-      costPerPlacement: parseFloat(costPerPlacement.toFixed(2)), // Single slot value (viewer-minutes based)
+      costPerPlacement: parseFloat(costPerPlacement.toFixed(2)), // Single slot value
       costPerActivation: parseFloat(costPerActivation.toFixed(2)), // Full frequency cost
       costPerActivationFull: parseFloat(costPerActivation.toFixed(2)), // Same as above
       totalInventoryValue: parseFloat(totalInventoryValue.toFixed(2)),
@@ -163,7 +147,7 @@ class PricingEngine {
       // Additional useful metrics
       adTimeMinutes: actualFrequency * PLACEMENT_DURATION_MINUTES,
       adTimePercentage: parseFloat(((actualFrequency * PLACEMENT_DURATION_MINUTES / streamLengthMinutes) * 100).toFixed(1)),
-      costPerViewerMinute: parseFloat((costPerPlacement / viewerMinutesPerPlacement).toFixed(4)),
+      costPerUniqueViewer: parseFloat((costPerPlacement / concurrentViewers).toFixed(2)),
     };
   }
 
