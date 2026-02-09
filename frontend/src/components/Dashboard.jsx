@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dashboard.css';
+import { generateSingleStreamPDF } from '../utils/pdfGenerator';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -170,7 +171,32 @@ function Dashboard() {
 
         {result && (
           <div className="results-section">
-            <h2>Sponsorship Value</h2>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
+              <h2 style={{margin: 0}}>Sponsorship Value</h2>
+              <button 
+                onClick={() => generateSingleStreamPDF(result, {
+                  streamLength,
+                  avgViewTime,
+                  totalViews
+                }, currency)}
+                style={{
+                  background: 'linear-gradient(135deg, #f4c430 0%, #e6b422 100%)',
+                  color: '#000',
+                  padding: '0.75rem 1.5rem',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 6px rgba(244, 196, 48, 0.3)',
+                  transition: 'transform 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+              >
+                📄 Export PDF
+              </button>
+            </div>
             
             {result.calculation.isPartialReach && (
               <div className="warning-banner" style={{
