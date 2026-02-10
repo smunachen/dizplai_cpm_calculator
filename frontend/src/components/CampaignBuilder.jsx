@@ -63,14 +63,6 @@ function CampaignBuilder() {
 
       updateStream(streamId, 'result', response.data);
       
-      // Only add a new stream if all current streams are calculated
-      setTimeout(() => {
-        const allCalculated = streams.every(s => s.id === streamId || s.result);
-        if (allCalculated) {
-          addStream();
-        }
-      }, 100);
-      
     } catch (error) {
       console.error('Error calculating stream:', error);
     }
@@ -147,7 +139,6 @@ function CampaignBuilder() {
 
   const getMaxPlacements = (stream) => {
     if (!stream.stream_length_minutes) return 0;
-    // FIXED: Changed from 0.5 (30 seconds) to 2 (2 minutes)
     return Math.floor((stream.stream_length_minutes * 0.3) / 2);
   };
 
@@ -187,119 +178,151 @@ function CampaignBuilder() {
             </select>
           </div>
 
-          {streams.length === 0 && (
-            <button className="add-stream-btn" onClick={addStream}>
-              + Add First Stream
-            </button>
-          )}
+          <button className="add-stream-btn" onClick={addStream}>
+            + Add Stream
+          </button>
         </div>
 
         <div className="streams-list">
           <h2>Streams ({streams.length})</h2>
           
           {streams.map((stream, index) => (
-            <div key={stream.id} className="stream-card">
-              <div className="stream-header">
-                <h3>Stream {index + 1}</h3>
-                <button className="remove-btn" onClick={() => removeStream(stream.id)}>×</button>
+            <div key={stream.id} className="stream-card-container">
+              {/* Left side - Input form */}
+              <div className="stream-card">
+                <div className="stream-header">
+                  <h3>Stream {index + 1}</h3>
+                  <button className="remove-btn" onClick={() => removeStream(stream.id)}>×</button>
+                </div>
+
+                <div className="stream-inputs">
+                  <div className="input-group">
+                    <label>Stream Type / Name</label>
+                    <input 
+                      type="text"
+                      value={stream.stream_type}
+                      onChange={(e) => updateStream(stream.id, 'stream_type', e.target.value)}
+                      placeholder="e.g., Weekly Sports Show"
+                    />
+                  </div>
+
+                  <div className="input-row">
+                    <div className="input-group">
+                      <label>What category is your content?</label>
+                      <select 
+                        value={stream.industry_id}
+                        onChange={(e) => updateStream(stream.id, 'industry_id', e.target.value)}
+                      >
+                        {industries.map(ind => (
+                          <option key={ind.id} value={ind.id}>{ind.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="input-group">
+                      <label>Expected duration? (min)</label>
+                      <input 
+                        type="number"
+                        value={stream.stream_length_minutes}
+                        onChange={(e) => updateStream(stream.id, 'stream_length_minutes', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="input-row">
+                    <div className="input-group">
+                      <label>Average user view time? (min)</label>
+                      <input 
+                        type="number"
+                        value={stream.avg_view_time_minutes}
+                        onChange={(e) => updateStream(stream.id, 'avg_view_time_minutes', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="input-group">
+                      <label>Average total live views?</label>
+                      <input 
+                        type="number"
+                        value={stream.total_views}
+                        onChange={(e) => updateStream(stream.id, 'total_views', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="input-row">
+                    <div className="input-group">
+                      <label>Minimum Ad Frequency</label>
+                      <div className="calculated-value-small">
+                        Each brand must appear {getCalculatedFrequency(stream)} times
+                      </div>
+                    </div>
+
+                    <div className="input-group">
+                      <label>Available Brand Slots (30% Rule)</label>
+                      <div className="calculated-value-small">
+                        Up to {getAvailableBrandSlots(stream)} brands can fit
+                      </div>
+                    </div>
+                  </div>
+
+                  <button 
+                    className="calculate-stream-btn"
+                    onClick={() => calculateStream(stream.id)}
+                  >
+                    Calculate Stream Value
+                  </button>
+                </div>
               </div>
 
-              <div className="stream-inputs">
-                <div className="input-group">
-                  <label>Stream Type / Name</label>
-                  <input 
-                    type="text"
-                    value={stream.stream_type}
-                    onChange={(e) => updateStream(stream.id, 'stream_type', e.target.value)}
-                    placeholder="e.g., Weekly Sports Show"
-                  />
-                </div>
-
-                <div className="input-row">
-                  <div className="input-group">
-                    <label>What category is your content?</label>
-                    <select 
-                      value={stream.industry_id}
-                      onChange={(e) => updateStream(stream.id, 'industry_id', e.target.value)}
-                    >
-                      {industries.map(ind => (
-                        <option key={ind.id} value={ind.id}>{ind.name}</option>
-                      ))}
-                    </select>
+              {/* Right side - Summary card (only shows after calculation) */}
+              {stream.result && (
+                <div className="stream-summary-card">
+                  <h3>Stream Value Summary</h3>
+                  
+                  <div className="summary-highlight">
+                    <span className="summary-label">Total Inventory Value</span>
+                    <span className="summary-value">{formatCurrency(stream.result.calculation.totalInventoryValue)}</span>
                   </div>
 
-                  <div className="input-group">
-                    <label>Expected duration? (min)</label>
-                    <input 
-                      type="number"
-                      value={stream.stream_length_minutes}
-                      onChange={(e) => updateStream(stream.id, 'stream_length_minutes', e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="input-row">
-                  <div className="input-group">
-                    <label>Average user view time? (min)</label>
-                    <input 
-                      type="number"
-                      value={stream.avg_view_time_minutes}
-                      onChange={(e) => updateStream(stream.id, 'avg_view_time_minutes', e.target.value)}
-                    />
-                  </div>
-
-                  <div className="input-group">
-                    <label>Average total live views?</label>
-                    <input 
-                      type="number"
-                      value={stream.total_views}
-                      onChange={(e) => updateStream(stream.id, 'total_views', e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="input-row">
-                  <div className="input-group">
-                    <label>Minimum Ad Frequency</label>
-                    <div className="calculated-value-small">
-                      Each brand must appear {getCalculatedFrequency(stream)} times
+                  <div className="summary-details">
+                    <div className="summary-item">
+                      <span className="summary-item-label">Concurrent Viewers</span>
+                      <span className="summary-item-value">{stream.result.calculation.concurrentViewers.toLocaleString()}</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-item-label">Premium CPM</span>
+                      <span className="summary-item-value">{formatCurrency(stream.result.calculation.premiumCPM)}</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-item-label">Cost Per Placement</span>
+                      <span className="summary-item-value">{formatCurrency(stream.result.calculation.costPerPlacement)}</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-item-label">Cost Per Activation</span>
+                      <span className="summary-item-value">{formatCurrency(stream.result.calculation.costPerActivation)}</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-item-label">Available Brand Slots</span>
+                      <span className="summary-item-value">{stream.result.calculation.availableBrandSlots} brands</span>
                     </div>
                   </div>
 
-                  <div className="input-group">
-                    <label>Available Brand Slots (30% Rule)</label>
-                    <div className="calculated-value-small">
-                      Up to {getAvailableBrandSlots(stream)} brands can fit
-                    </div>
+                  <div className="summary-explanation">
+                    <p>
+                      This is the MAXIMUM REVENUE if all {stream.result.calculation.availableBrandSlots} brand slots are sold.
+                    </p>
+                    <p>
+                      Each placement: {formatCurrency(stream.result.calculation.costPerPlacement)} × {stream.result.calculation.minAdFrequency} placements = {formatCurrency(stream.result.calculation.costPerActivation)} per brand
+                    </p>
                   </div>
                 </div>
-
-                <button 
-                  className="calculate-stream-btn"
-                  onClick={() => calculateStream(stream.id)}
-                >
-                  Calculate Stream Value
-                </button>
-
-                {stream.result && (
-                  <div className="stream-result">
-                    <div className="result-value">
-                      {formatCurrency(stream.result.calculation.totalInventoryValue)}
-                    </div>
-                    <div className="result-details">
-                      Premium CPM: {formatCurrency(stream.result.calculation.premiumCPM)} | 
-                      Cost Per Placement: {formatCurrency(stream.result.calculation.costPerPlacement)} | 
-                      Brand Slots: {stream.result.calculation.availableBrandSlots}
-                    </div>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           ))}
 
           {streams.length === 0 && (
             <div className="empty-state">
-              <p>No streams added yet. Click "Add First Stream" to get started.</p>
+              <p>No streams added yet. Click "+ Add Stream" to get started.</p>
             </div>
           )}
         </div>

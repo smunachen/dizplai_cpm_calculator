@@ -97,11 +97,18 @@
   font-size: 1.5rem;
 }
 
+/* Side-by-side container for stream card and summary */
+.stream-card-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
 .stream-card {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   padding: 1.5rem;
-  margin-bottom: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -168,6 +175,94 @@
 
 .calculate-stream-btn:hover {
   background: rgba(0, 212, 170, 0.3);
+}
+
+/* Stream summary card (right side) */
+.stream-summary-card {
+  background: linear-gradient(135deg, #00d4aa15, #f4c43015);
+  border: 1px solid #00d4aa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stream-summary-card h3 {
+  color: #00d4aa;
+  font-size: 1.2rem;
+  margin: 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0, 212, 170, 0.3);
+}
+
+.summary-highlight {
+  background: rgba(244, 196, 48, 0.15);
+  border: 2px solid #f4c430;
+  border-radius: 10px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.summary-label {
+  display: block;
+  color: #b4b8c5;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.summary-value {
+  display: block;
+  color: #f4c430;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.summary-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-item-label {
+  color: #b4b8c5;
+  font-size: 0.9rem;
+}
+
+.summary-item-value {
+  color: #00d4aa;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.summary-explanation {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  border-left: 3px solid #00d4aa;
+}
+
+.summary-explanation p {
+  color: #9ca3b8;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+.summary-explanation p:last-child {
+  margin-bottom: 0;
 }
 
 .stream-result {
@@ -291,6 +386,12 @@
   color: #00d4aa;
   text-align: center;
   margin-top: 0.5rem;
+}
+
+@media (max-width: 1200px) {
+  .stream-card-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
