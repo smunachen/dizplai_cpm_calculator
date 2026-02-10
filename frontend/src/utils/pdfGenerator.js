@@ -56,14 +56,122 @@ export const generateCampaignPDF = (campaign, streams, totalValue, currency = 'G
   doc.setFont('helvetica', 'bold');
   doc.text(formatCurrency(totalValue), 143, 68);
 
-  // Streams Table
+  // Executive Summary Section
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(0, 212, 170);
+  doc.text('Executive Summary', 15, 85);
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(60, 60, 60);
+  
+  const summaryLines = [
+    `This ${streams.length}-stream campaign represents the MAXIMUM REVENUE opportunity if all brand`,
+    `slots across your content schedule are sold. Each stream has been valued based on research-`,
+    `backed CPM benchmarks, concurrent audience reach, and sustainable inventory allocation (30%`,
+    `rule). The total campaign value of ${formatCurrency(totalValue)} reflects professional-grade sponsorship pricing`,
+    `that balances creator monetization with viewer experience.`
+  ];
+
+  let summaryY = 92;
+  summaryLines.forEach(line => {
+    doc.text(line, 15, summaryY);
+    summaryY += 5;
+  });
+
+  // Individual Stream Details
+  let currentY = summaryY + 10;
+  
+  streams.forEach((stream, index) => {
+    // Check if we need a new page
+    if (currentY > 240) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(244, 196, 48);
+    doc.text(`Stream ${index + 1}: ${stream.stream_type || stream.industry_name}`, 15, currentY);
+    currentY += 7;
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(60, 60, 60);
+
+    const streamExplanation = [
+      `Content: ${stream.industry_name} | Length: ${stream.stream_length_minutes} min | Views: ${parseInt(stream.total_views).toLocaleString()}`,
+      '',
+      `This stream is valued at ${formatCurrency(stream.total_inventory_value)} (maximum revenue if all brand slots sell).`,
+      `Each 2-minute placement is priced at ${formatCurrency(stream.cost_per_placement)} based on concurrent audience`,
+      `reach. Brands need ${stream.min_ad_frequency} placements distributed throughout the stream to guarantee`,
+      `100% audience reach, creating a full activation cost of ${formatCurrency(stream.cost_per_activation)} per brand.`,
+      `Based on the ${stream.stream_length_minutes}-minute duration and 30% inventory rule, there are slots for`,
+      `${stream.available_brand_slots || Math.floor(stream.max_placements / stream.min_ad_frequency)} brands maximum.`,
+      ''
+    ];
+
+    streamExplanation.forEach(line => {
+      doc.text(line, 15, currentY);
+      currentY += 4.5;
+    });
+
+    currentY += 3;
+  });
+
+  // Campaign Strategy Section
+  if (currentY > 220) {
+    doc.addPage();
+    currentY = 20;
+  }
+
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(0, 212, 170);
+  doc.text('Campaign Strategy & Rationale', 15, currentY);
+  currentY += 7;
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(60, 60, 60);
+
+  const strategyText = [
+    'PORTFOLIO APPROACH: Multi-stream campaigns offer sponsors diverse touchpoints across your',
+    'content calendar. This creates sustained brand visibility and reduces dependency on single events.',
+    '',
+    `TOTAL ADDRESSABLE MARKET: The combined inventory value of ${formatCurrency(totalValue)} represents`,
+    'your maximum earning potential across this content slate. Actual revenue depends on sell-through',
+    'rate and negotiated pricing within these benchmarks.',
+    '',
+    'PRICING FLEXIBILITY: Sponsors can purchase individual placements, full activations (guaranteed',
+    'reach), or cross-stream packages. The modular structure allows for both premium single-sponsor',
+    'deals and multi-brand shared inventory approaches.',
+    '',
+    'VIEWER EXPERIENCE: All valuations respect the industry-standard 30% ad load threshold,',
+    'ensuring sponsorships enhance rather than compromise content quality. Sustainable monetization',
+    'protects long-term audience growth and sponsor ROI.'
+  ];
+
+  strategyText.forEach(line => {
+    if (currentY > 275) {
+      doc.addPage();
+      currentY = 20;
+    }
+    doc.text(line, 15, currentY);
+    currentY += 5;
+  });
+
+  // Stream Breakdown Table (new page)
+  doc.addPage();
+  
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.setTextColor(0, 0, 0);
-  doc.text('Stream Breakdown', 15, 85);
+  doc.text('Stream Breakdown', 15, 20);
 
   const tableData = streams.map(stream => [
-    stream.stream_type,
+    stream.stream_type || stream.industry_name,
     stream.industry_name,
     `${stream.stream_length_minutes} min`,
     parseInt(stream.total_views).toLocaleString(),
@@ -72,7 +180,7 @@ export const generateCampaignPDF = (campaign, streams, totalValue, currency = 'G
   ]);
 
   autoTable(doc, {
-    startY: 90,
+    startY: 25,
     head: [['Stream Type', 'Content', 'Length', 'Views', 'Placements', 'Value']],
     body: tableData,
     foot: [['', '', '', '', 'TOTAL', formatCurrency(totalValue)]],
@@ -210,11 +318,45 @@ export const generateSingleStreamPDF = (result, streamParams, currency = 'GBP') 
   doc.setFont('helvetica', 'bold');
   doc.text(formatCurrency(result.calculation.totalInventoryValue), 143, 68);
 
+  // Value Explanation Section (NEW - matches Dashboard UI)
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(0, 212, 170);
+  doc.text('Value Explanation', 15, 85);
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(60, 60, 60);
+  
+  const explanationLines = [
+    `This is the MAXIMUM REVENUE if all ${result.calculation.availableBrandSlots} brand slots are sold.`,
+    '',
+    `Each ad placement is valued at ${formatCurrency(result.calculation.costPerPlacement)} based on the Premium CPM`,
+    `(${formatCurrency(result.calculation.premiumCPM)}) and the average concurrent audience of ${result.calculation.concurrentViewers.toLocaleString()} viewers`,
+    `predicted at each point of the live stream.`,
+    '',
+    `Each sponsorship slot consists of ${result.calculation.minAdFrequency} x 2-minute brand placements distributed`,
+    `throughout the stream to reach the full audience over its duration.`,
+    '',
+    `So, each FULL AUDIENCE brand activation is valued at ${formatCurrency(result.calculation.costPerActivation)}.`,
+    '',
+    `Based on the stream length and the 30% inventory rule (no more than 30% of stream time`,
+    `can be used for sponsorships), there are slots for ${result.calculation.availableBrandSlots} separate brands.`,
+    '',
+    `Total Inventory Value (if all ${result.calculation.availableBrandSlots} slots sell) = ${formatCurrency(result.calculation.totalInventoryValue)}.`
+  ];
+
+  let explainY = 92;
+  explanationLines.forEach(line => {
+    doc.text(line, 15, explainY);
+    explainY += 5;
+  });
+
   // Stream Parameters Section
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.setTextColor(0, 0, 0);
-  doc.text('Stream Parameters', 15, 85);
+  doc.text('Stream Parameters', 15, explainY + 10);
 
   const paramsData = [
     ['Content Category', result.industry.name],
@@ -225,7 +367,7 @@ export const generateSingleStreamPDF = (result, streamParams, currency = 'GBP') 
   ];
 
   autoTable(doc, {
-    startY: 90,
+    startY: explainY + 15,
     body: paramsData,
     theme: 'plain',
     styles: {
